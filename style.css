@@ -190,6 +190,7 @@ body.theme-dark .aurora-display-text {
 .portrait-frame:hover .foto-personagem {
     transform: scale(1.02);
     filter: saturate(1.02);
+    box-shadow: 0px 0px 62px 2px rgb(191, 165, 68, 0.62);
 }
 
 /* Input fica invisível, mas clicável */
