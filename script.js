@@ -109,7 +109,7 @@ new Vue({
 
                 formData.append("avatar", file);
 
-                const uploadRes = await fetch("http://localhost:4321/upload-avatar", {
+                const uploadRes = await fetch("https://aurora-backend-8xda.onrender.com/upload-avatar", {
                     method: "POST",
                     body: formData
                 });
