@@ -23,7 +23,7 @@
 <body>
   <div id="app" class="container py-3">
 
-     <!-- NAV TABS -->
+    <!-- NAV TABS -->
     <ul class="nav nav-tabs mb-3">
       <li class="nav-item">
         <button class="nav-link" :class="{active: activeTab==='ficha'}" @click="setTab('ficha')">Ficha</button>
@@ -36,256 +36,264 @@
     <!-- CONTEÚDO FICHA -->
     <div v-if="activeTab==='ficha'">
 
-    <!-- AÇÕES ACIMA DO HEADER -->
-    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
-      <div>
-        <button :class="['btn','me-2', editMode? 'btn-cancel':'btn-edit']" @click="toggleEdit"
-          v-if="!editMode">Editar</button>
-        <span v-else>
-          <button class="btn btn-save me-2" @click="saveAndExport">Salvar</button>
-          <button class="btn btn-cancel" @click="cancelEdit">Cancelar</button>
-        </span>
+      <!-- AÇÕES ACIMA DO HEADER -->
+      <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+        <div>
+          <button :class="['btn','me-2', editMode? 'btn-cancel':'btn-edit']" @click="toggleEdit"
+            v-if="!editMode">Editar</button>
+          <span v-else>
+            <button class="btn btn-save me-2" @click="saveAndExport">Salvar</button>
+            <button class="btn btn-cancel" @click="cancelEdit">Cancelar</button>
+          </span>
 
-        <button class="btn btn-export ms-2" @click="exportJson">Exportar JSON</button>
-        <label class="btn btn-import ms-2 mb-0">
-          Importar JSON
-          <input type="file" ref="importFile" @change="handleImport" accept="application/json" style="display:none" />
-        </label>
-      </div>
-      <div class="d-flex align-items-center gap-2">
-        <div class="small text-muted">Modo: <strong>{{ editMode ? 'Edição' : 'Visualização' }}</strong></div>
-        <button class="btn btn-outline-secondary aurora-theme-toggle" @click="toggleTheme"
-          :aria-label="theme==='dark' ? 'Alternar para modo claro' : 'Alternar para modo escuro'">
-          <span v-if="theme==='dark'">☀️</span>
-          <span v-else>🌙</span>
-        </button>
-      </div>
-    </div>
-
-    <hr>
-
-    <!-- HEADER -->
-    <div class="container-header container-fluid py-3 d-flex justify-content-between align-items-end gap-4">
-
-      <!-- ESQUERDA: CAMPOS PERSONAGEM / DOM / ORIGEM -->
-      <div class="header-left w-100">
-
-        <div class="aurora-header-block mb-2 w-100">
-          <label class="aurora-header-label">Personagem</label>
-
-          <!-- Texto (quando não está editando) -->
-          <div v-if="!editMode" class="aurora-display-text">
-            {{ personagem.nome || '—' }}
-          </div>
-
-          <!-- Input (quando editando) -->
-          <input v-else type="text" class="form-control" v-model="personagem.nome">
+          <button class="btn btn-export ms-2" @click="exportJson">Exportar JSON</button>
+          <label class="btn btn-import ms-2 mb-0">
+            Importar JSON
+            <input type="file" ref="importFile" @change="handleImport" accept="application/json" style="display:none" />
+          </label>
         </div>
+        <div class="d-flex align-items-center gap-2">
+          <div class="small text-muted">Modo: <strong>{{ editMode ? 'Edição' : 'Visualização' }}</strong></div>
+          <button class="btn btn-outline-secondary aurora-theme-toggle" @click="toggleTheme"
+            :aria-label="theme==='dark' ? 'Alternar para modo claro' : 'Alternar para modo escuro'">
+            <span v-if="theme==='dark'">☀️</span>
+            <span v-else>🌙</span>
+          </button>
+        </div>
+      </div>
 
-        <div class="d-flex gap-3">
-          <div class="aurora-header-block w-100">
-            <label class="aurora-header-label">Dom</label>
+      <hr>
 
+      <!-- HEADER -->
+      <div class="container-header container-fluid py-3 d-flex justify-content-between align-items-end gap-4">
+
+        <!-- ESQUERDA: CAMPOS PERSONAGEM / DOM / ORIGEM -->
+        <div class="header-left w-100">
+
+          <div class="aurora-header-block mb-2 w-100">
+            <label class="aurora-header-label">Personagem</label>
+
+            <!-- Texto (quando não está editando) -->
             <div v-if="!editMode" class="aurora-display-text">
-              {{ personagem.dom || '—' }}
+              {{ personagem.nome || '—' }}
             </div>
 
-            <input v-else type="text" class="form-control" v-model="personagem.dom">
+            <!-- Input (quando editando) -->
+            <input v-else type="text" class="form-control" v-model="personagem.nome">
           </div>
 
+          <div class="d-flex gap-3">
+            <div class="aurora-header-block w-100">
+              <label class="aurora-header-label">Dom</label>
 
-          <div class="aurora-header-block">
-            <label class="aurora-header-label">Origem</label>
-
-            <div v-if="!editMode" class="aurora-display-text">
-              {{ personagem.origem || '—' }}
-            </div>
-
-            <!-- Select de Origens (aplica bônus automaticamente) -->
-            <select v-else class="form-select" v-model="personagem.origem" @change="applyOriginBonuses">
-              <option value="">Selecione uma origem...</option>
-              <option v-for="o in origens" :key="o.nome" :value="o.nome">
-                {{ o.nome }}
-              </option>
-            </select>
-          </div>
-
-        </div>
-
-      </div>
-
-      <!-- DIREITA: LOGO -->
-      <div class="header-right text-end">
-        <img src="assets/aurora-logo.png" class="aurora-logo">
-      </div>
-
-    </div>
-
-
-    <!-- LAYOUT EM DUAS COLUNAS -->
-    <div class="row">
-      <!-- COLUNA 1 -->
-      <div class="col-lg-6 mb-4">
-
-        <!-- FOTO -->
-        <div class="text-center mb-3">
-          <div class="portrait-frame mx-auto mb-2">
-            <img src="assets/avatar-frame.png" class="frame-overlay" />
-
-            <img :src="personagem.foto || placeholder" class="foto-personagem" />
-
-            <input type="file" :disabled="!editMode" @change="carregarFoto" class="file-input" accept="image/*" />
-          </div>
-        </div>
-
-        <!-- ATRIBUTOS -->
-        <h5 class="section-title">Atributos</h5>
-        <div class="row g-2 mb-3 attrs-wrap pericias-block p-3 mb-3 mt-2">
-          <div v-for="(val,key) in personagem.atributos" :key="key" class="col-4"
-            :class="{ 'mt-0': key === 'for' || key === 'des' || key === 'sau' }">
-            <div class="input-group attr-input">
-              <span class="input-group-text attr-label">{{ key.toUpperCase() }}</span>
-              <input :disabled="!editMode" type="number" v-model.number="personagem.atributos[key]"
-                class="form-control" />
-            </div>
-          </div>
-        </div>
-
-        <!-- PV e PD -->
-        <h5 class="section-title">PV & PD</h5>
-        <div class="row pericias-block p-3 mb-3 mt-2" style="margin-left: -4px; margin-right: -4px;">
-          <div class="col-6 ps-0">
-            <label class="form-label small">Pontos de Vida</label>
-            <div class="input-group mb-1">
-              <span class="input-group-text attr-label">Max</span>
-              <input :disabled="!editMode" type="number" v-model.number="personagem.pv.max" class="form-control" />
-            </div>
-            <div class="input-group">
-              <span class="input-group-text attr-label">Atual</span>
-              <input :disabled="!editMode" type="number" v-model.number="personagem.pv.atual" class="form-control" />
-            </div>
-          </div>
-          <div class="col-6 pe-0">
-            <label class="form-label small">Pontos de Dom</label>
-            <div class="input-group mb-1">
-              <span class="input-group-text attr-label">Max</span>
-              <input :disabled="!editMode" type="number" v-model.number="personagem.pd.max" class="form-control" />
-            </div>
-            <div class="input-group">
-              <span class="input-group-text attr-label">Atual</span>
-              <input :disabled="!editMode" type="number" v-model.number="personagem.pd.atual" class="form-control" />
-            </div>
-          </div>
-        </div>
-
-        <!-- DEFESA -->
-        <h5 class="section-title">Defesa</h5>
-        <div class="defesa-block pericias-block p-3 mb-3 mt-2">
-          <div class="row g-3 align-items-stretch">
-            <!-- TOTAL (centro) -->
-            <div class="col-12 col-md-3 d-flex justify-content-center">
-              <div class="defesa-total-display w-100 d-flex flex-column justify-content-center align-self-center">
-                <div>TOTAL</div>
-                <div class="defesa-total-value">{{ totalDefesa }}</div>
+              <div v-if="!editMode" class="aurora-display-text">
+                {{ personagem.dom || '—' }}
               </div>
+
+              <input v-else type="text" class="form-control" v-model="personagem.dom">
             </div>
 
-            <!-- GRID 2x2 (direita) -->
-            <div class="col-12 col-md-6">
-              <div class="row g-2">
-                <div class="col-6">
-                  <label class="form-label small mb-1">Destreza (bônus)</label>
-                  <div class="input-group">
-                    <span class="input-group-text attr-label">DES</span>
-                    <input type="number" class="form-control text-center" :value="bonusDestreza" disabled>
-                  </div>
-                </div>
-                <div class="col-6">
-                  <label class="form-label small mb-1">Armadura</label>
-                  <div class="input-group">
-                    <span class="input-group-text attr-label">ARM</span>
-                    <input :disabled="!editMode" type="number" v-model.number="personagem.defesa.armadura"
-                      class="form-control text-center">
-                  </div>
-                </div>
-                <div class="col-6">
-                  <label class="form-label small mb-1">Escudo</label>
-                  <div class="input-group">
-                    <span class="input-group-text attr-label">ESC</span>
-                    <input :disabled="!editMode" type="number" v-model.number="personagem.defesa.escudo"
-                      class="form-control text-center">
-                  </div>
-                </div>
-                <div class="col-6">
-                  <label class="form-label small mb-1">Outros</label>
-                  <div class="input-group">
-                    <span class="input-group-text attr-label">OUT</span>
-                    <input :disabled="!editMode" type="number" v-model.number="personagem.defesa.outros"
-                      class="form-control text-center">
-                  </div>
-                </div>
+            <!-- Nível (novo) -->
+            <div class="aurora-header-block" style="min-width:120px; max-width:160px;">
+              <label class="aurora-header-label">Nível</label>
+              <div v-if="!editMode" class="aurora-display-text">
+                {{ personagem.nivel || 1 }}
+              </div>
+              <input v-else type="number" min="1" class="form-control" v-model.number="personagem.nivel">
+            </div>
+
+            <div class="aurora-header-block">
+              <label class="aurora-header-label">Origem</label>
+
+              <div v-if="!editMode" class="aurora-display-text">
+                {{ personagem.origem || '—' }}
+              </div>
+
+              <!-- Select de Origens (aplica bônus automaticamente) -->
+              <select v-else class="form-select" v-model="personagem.origem" @change="applyOriginBonuses">
+                <option value="">Selecione uma origem...</option>
+                <option v-for="o in origens" :key="o.nome" :value="o.nome">
+                  {{ o.nome }}
+                </option>
+              </select>
+            </div>
+
+          </div>
+
+        </div>
+
+        <!-- DIREITA: LOGO -->
+        <div class="header-right text-end">
+          <img src="assets/aurora-logo.png" class="aurora-logo">
+        </div>
+
+      </div>
+
+
+      <!-- LAYOUT EM DUAS COLUNAS -->
+      <div class="row">
+        <!-- COLUNA 1 -->
+        <div class="col-lg-6 mb-4">
+
+          <!-- FOTO -->
+          <div class="text-center mb-3">
+            <div class="portrait-frame mx-auto mb-2">
+              <img src="assets/avatar-frame.png" class="frame-overlay" />
+
+              <img :src="personagem.foto || placeholder" class="foto-personagem" />
+
+              <input type="file" :disabled="!editMode" @change="carregarFoto" class="file-input" accept="image/*" />
+            </div>
+          </div>
+
+          <!-- ATRIBUTOS -->
+          <h5 class="section-title">Atributos</h5>
+          <div class="row g-2 mb-3 attrs-wrap pericias-block p-3 mb-3 mt-2">
+            <div v-for="(val,key) in personagem.atributos" :key="key" class="col-4"
+              :class="{ 'mt-0': key === 'for' || key === 'des' || key === 'sau' }">
+              <div class="input-group attr-input">
+                <span class="input-group-text attr-label">{{ key.toUpperCase() }}</span>
+                <input :disabled="!editMode" type="number" v-model.number="personagem.atributos[key]"
+                  class="form-control" />
               </div>
             </div>
           </div>
 
-          <div class="mt-3 defesa-breakdown small text-muted">
-            10 (Base) + {{ bonusDestreza }} (Destreza) + {{ personagem.defesa.armadura || 0 }} (Armadura) +
-            {{ personagem.defesa.escudo || 0 }} (Escudo) + {{ personagem.defesa.outros || 0 }} (Outros)
-          </div>
-        </div>
-        <!-- ATAQUES -->
-        <h5 class="section-title">Ataques / Ações</h5>
-        <div class="input-group mb-2">
-          <input :disabled="!editMode" v-model="novoAtaque.nome" class="form-control" placeholder="Nome" />
-          <input :disabled="!editMode" v-model="novoAtaque.teste" class="form-control" placeholder="Teste" />
-          <input :disabled="!editMode" v-model="novoAtaque.dano" class="form-control" placeholder="Dano" />
-          <input :disabled="!editMode" v-model="novoAtaque.tipo" class="form-control" placeholder="Tipo" />
-          <input :disabled="!editMode" v-model="novoAtaque.critico" class="form-control" placeholder="Crítico" />
-          <input :disabled="!editMode" v-model="novoAtaque.alcance" class="form-control" placeholder="Alcance" />
-          <button :disabled="!editMode" class="btn btn-gold" @click="adicionarAtaque">+</button>
-        </div>
-
-        <ul class="list-group mb-4">
-          <li v-for="(atk, idx) in personagem.ataques" :key="idx"
-            class="list-group-item d-flex justify-content-between align-items-center">
-            <div>
-              <strong>{{ atk.nome }}</strong>
-              <div class="small text-muted">Teste: {{ atk.teste }} — Dano: {{ atk.dano }} — Tipo: {{ atk.tipo }} —
-                Crítico: {{ atk.critico }} — Alc: {{ atk.alcance }}</div>
+          <!-- PV e PD -->
+          <h5 class="section-title">PV & PD</h5>
+          <div class="row pericias-block p-3 mb-3 mt-2" style="margin-left: -4px; margin-right: -4px;">
+            <div class="col-6 ps-0">
+              <label class="form-label small">Pontos de Vida</label>
+              <div class="input-group mb-1">
+                <span class="input-group-text attr-label">Max</span>
+                <input :disabled="!editMode" type="number" v-model.number="personagem.pv.max" class="form-control" />
+              </div>
+              <div class="input-group">
+                <span class="input-group-text attr-label">Atual</span>
+                <input :disabled="!editMode" type="number" v-model.number="personagem.pv.atual" class="form-control" />
+              </div>
             </div>
-            <button :disabled="!editMode" class="btn btn-sm btn-danger" @click="removerAtaque(idx)">Remover</button>
-          </li>
-        </ul>
-
-        <!-- HABILIDADES / DONS -->
-        <h5 class="section-title">Habilidades & Dons</h5>
-        <div class="input-group mb-2">
-          <input :disabled="!editMode" v-model="novaHab" class="form-control" placeholder="Nova habilidade" />
-          <button :disabled="!editMode" class="btn btn-gold" @click="adicionarHab">+</button>
-        </div>
-        <ul class="list-group">
-          <li v-for="(h, i) in personagem.habilidades" :key="i"
-            class="list-group-item d-flex justify-content-between align-items-center">
-            <span>{{ h }}</span>
-            <button :disabled="!editMode" class="btn btn-sm btn-danger" @click="removerHab(i)">Remover</button>
-          </li>
-        </ul>
-      </div>
-
-      <!-- COLUNA 2 -->
-      <div class="col-lg-6 mb-4">
-
-        <h5 class="section-title">Perícias</h5>
-
-        <div class="pericias-block p-3 mb-3">
-          <div class="d-flex fw-bold mb-2 small">
-            <div style="width:36%">Perícia</div>
-            <div style="width:14%">Total</div>
-            <div style="width:12%">1/2 Nível</div>
-            <div style="width:12%">Atributo</div>
-            <div style="width:13%">Treino</div>
-            <div style="width:13%">Outros</div>
+            <div class="col-6 pe-0">
+              <label class="form-label small">Pontos de Dom</label>
+              <div class="input-group mb-1">
+                <span class="input-group-text attr-label">Max</span>
+                <input :disabled="!editMode" type="number" v-model.number="personagem.pd.max" class="form-control" />
+              </div>
+              <div class="input-group">
+                <span class="input-group-text attr-label">Atual</span>
+                <input :disabled="!editMode" type="number" v-model.number="personagem.pd.atual" class="form-control" />
+              </div>
+            </div>
           </div>
+
+          <!-- DEFESA -->
+          <h5 class="section-title">Defesa</h5>
+          <div class="defesa-block pericias-block p-3 mb-3 mt-2">
+            <div class="row g-3 align-items-stretch">
+              <!-- TOTAL (centro) -->
+              <div class="col-12 col-md-3 d-flex justify-content-center">
+                <div class="defesa-total-display w-100 d-flex flex-column justify-content-center align-self-center">
+                  <div>TOTAL</div>
+                  <div class="defesa-total-value">{{ totalDefesa }}</div>
+                </div>
+              </div>
+
+              <!-- GRID 2x2 (direita) -->
+              <div class="col-12 col-md-6">
+                <div class="row g-2">
+                  <div class="col-6">
+                    <label class="form-label small mb-1">Destreza (bônus)</label>
+                    <div class="input-group">
+                      <span class="input-group-text attr-label">DES</span>
+                      <input type="number" class="form-control text-center" :value="bonusDestreza" disabled>
+                    </div>
+                  </div>
+                  <div class="col-6">
+                    <label class="form-label small mb-1">Armadura</label>
+                    <div class="input-group">
+                      <span class="input-group-text attr-label">ARM</span>
+                      <input :disabled="!editMode" type="number" v-model.number="personagem.defesa.armadura"
+                        class="form-control text-center">
+                    </div>
+                  </div>
+                  <div class="col-6">
+                    <label class="form-label small mb-1">Escudo</label>
+                    <div class="input-group">
+                      <span class="input-group-text attr-label">ESC</span>
+                      <input :disabled="!editMode" type="number" v-model.number="personagem.defesa.escudo"
+                        class="form-control text-center">
+                    </div>
+                  </div>
+                  <div class="col-6">
+                    <label class="form-label small mb-1">Outros</label>
+                    <div class="input-group">
+                      <span class="input-group-text attr-label">OUT</span>
+                      <input :disabled="!editMode" type="number" v-model.number="personagem.defesa.outros"
+                        class="form-control text-center">
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-3 defesa-breakdown small text-muted">
+              10 (Base) + {{ bonusDestreza }} (Destreza) + {{ personagem.defesa.armadura || 0 }} (Armadura) +
+              {{ personagem.defesa.escudo || 0 }} (Escudo) + {{ personagem.defesa.outros || 0 }} (Outros)
+            </div>
+          </div>
+          <!-- ATAQUES -->
+          <h5 class="section-title">Ataques / Ações</h5>
+          <div class="input-group mb-2">
+            <input :disabled="!editMode" v-model="novoAtaque.nome" class="form-control" placeholder="Nome" />
+            <input :disabled="!editMode" v-model="novoAtaque.teste" class="form-control" placeholder="Teste" />
+            <input :disabled="!editMode" v-model="novoAtaque.dano" class="form-control" placeholder="Dano" />
+            <input :disabled="!editMode" v-model="novoAtaque.tipo" class="form-control" placeholder="Tipo" />
+            <input :disabled="!editMode" v-model="novoAtaque.critico" class="form-control" placeholder="Crítico" />
+            <input :disabled="!editMode" v-model="novoAtaque.alcance" class="form-control" placeholder="Alcance" />
+            <button :disabled="!editMode" class="btn btn-gold" @click="adicionarAtaque">+</button>
+          </div>
+
+          <ul class="list-group mb-4">
+            <li v-for="(atk, idx) in personagem.ataques" :key="idx"
+              class="list-group-item d-flex justify-content-between align-items-center">
+              <div>
+                <strong>{{ atk.nome }}</strong>
+                <div class="small text-muted">Teste: {{ atk.teste }} — Dano: {{ atk.dano }} — Tipo: {{ atk.tipo }} —
+                  Crítico: {{ atk.critico }} — Alc: {{ atk.alcance }}</div>
+              </div>
+              <button :disabled="!editMode" class="btn btn-sm btn-danger" @click="removerAtaque(idx)">Remover</button>
+            </li>
+          </ul>
+
+          <!-- HABILIDADES / DONS -->
+          <h5 class="section-title">Habilidades & Dons</h5>
+          <div class="input-group mb-2">
+            <input :disabled="!editMode" v-model="novaHab" class="form-control" placeholder="Nova habilidade" />
+            <button :disabled="!editMode" class="btn btn-gold" @click="adicionarHab">+</button>
+          </div>
+          <ul class="list-group">
+            <li v-for="(h, i) in personagem.habilidades" :key="i"
+              class="list-group-item d-flex justify-content-between align-items-center">
+              <span>{{ h }}</span>
+              <button :disabled="!editMode" class="btn btn-sm btn-danger" @click="removerHab(i)">Remover</button>
+            </li>
+          </ul>
+        </div>
+
+        <!-- COLUNA 2 -->
+        <div class="col-lg-6 mb-4">
+
+          <h5 class="section-title">Perícias</h5>
+
+          <div class="pericias-block p-3 mb-3">
+            <div class="d-flex fw-bold mb-2 small">
+              <div style="width:36%">Perícia</div>
+              <div style="width:14%">Total</div>
+              <div style="width:12%">1/2 Nível</div>
+              <div style="width:12%">Atributo</div>
+              <div style="width:13%">Treino</div>
+              <div style="width:13%">Outros</div>
+            </div>
 
           <div v-for="(p, idx) in pericias" :key="p.nome" class="d-flex align-items-center pericia-row mb-2 gap-1">
             <div style="width:36%">{{ p.nome }} <small class="text-muted">({{ p.atrib }})</small></div>
@@ -293,8 +301,11 @@
               <input :disabled="true" type="number" class="form-control form-control-sm text-center"
                 :value="totalPericia(p)" readonly />
             </div>
-            <div style="width:12%"><input :disabled="!editMode" type="number" v-model.number="p.halfLevel"
-                class="form-control form-control-sm" /></div>
+            <!-- 1/2 Nível agora calculado automaticamente -->
+            <div style="width:12%">
+              <input disabled type="number" :value="halfLevelValue"
+                class="form-control form-control-sm text-center" />
+            </div>
             <!-- BONUS DO ATRIBUTO (auto) -->
             <div style="width:12%">
               <input disabled type="number" :value="attrBonusFromSigla(p.atrib)"
@@ -305,45 +316,46 @@
             <div style="width:13%"><input :disabled="!editMode" type="number" v-model.number="p.outros"
                 class="form-control form-control-sm" /></div>
           </div>
-        </div>
+          </div>
 
-        <!-- EQUIPAMENTO -->
-        <h5 class="section-title">Equipamentos</h5>
-        <div class="input-group mb-2">
-          <input :disabled="!editMode" v-model="novoItem" class="form-control" placeholder="Novo item" />
-          <button :disabled="!editMode" class="btn btn-gold" @click="addItem">+</button>
-        </div>
-        <ul class="list-group mb-3">
-          <li v-for="(item, i) in personagem.equipamentos" :key="i"
-            class="list-group-item d-flex justify-content-between align-items-center">
-            <span>{{ item }}</span>
-            <button :disabled="!editMode" class="btn btn-sm btn-danger" @click="delItem(i)">Remover</button>
-          </li>
-        </ul>
+          <!-- EQUIPAMENTO -->
+          <h5 class="section-title">Equipamentos</h5>
+          <div class="input-group mb-2">
+            <input :disabled="!editMode" v-model="novoItem" class="form-control" placeholder="Novo item" />
+            <button :disabled="!editMode" class="btn btn-gold" @click="addItem">+</button>
+          </div>
+          <ul class="list-group mb-3">
+            <li v-for="(item, i) in personagem.equipamentos" :key="i"
+              class="list-group-item d-flex justify-content-between align-items-center">
+              <span>{{ item }}</span>
+              <button :disabled="!editMode" class="btn btn-sm btn-danger" @click="delItem(i)">Remover</button>
+            </li>
+          </ul>
 
-        <div class="row g-2">
-          <div class="col-6">
-            <div class="input-group">
-              <span class="input-group-text attr-label">M.O</span>
-              <input :disabled="!editMode" type="number" v-model.number="personagem.mo" class="form-control" />
+          <div class="row g-2">
+            <div class="col-6">
+              <div class="input-group">
+                <span class="input-group-text attr-label">M.O</span>
+                <input :disabled="!editMode" type="number" v-model.number="personagem.mo" class="form-control" />
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="input-group">
+                <span class="input-group-text attr-label">Peso (kg)</span>
+                <input :disabled="!editMode" type="number" v-model.number="personagem.peso" class="form-control" />
+              </div>
             </div>
           </div>
-          <div class="col-6">
-            <div class="input-group">
-              <span class="input-group-text attr-label">Peso (kg)</span>
-              <input :disabled="!editMode" type="number" v-model.number="personagem.peso" class="form-control" />
-            </div>
-          </div>
-        </div>
 
+        </div>
       </div>
     </div>
-    </div>
-        <div v-if="activeTab==='livro'" class="livro-wrapper">
+    <div v-if="activeTab==='livro'" class="livro-wrapper">
       <div class="mb-2 d-flex justify-content-between align-items-center">
         <h5 class="section-title mb-0">Livro do Sistema</h5>
-        <a href="assets/livro.pdf" target="_blank" class="btn btn-gold btn-sm"><i class="bi bi-box-arrow-up-right"></i></a>
-      </div> 
+        <a href="assets/livro.pdf" target="_blank" class="btn btn-gold btn-sm"><i
+            class="bi bi-box-arrow-up-right"></i></a>
+      </div>
       <div class="pdf-frame">
         <object data="assets/livro.pdf#toolbar=0&navpanes=0" type="application/pdf" width="100%" height="100%">
           <p>Seu navegador não abriu o PDF. <a href="assets/livro.pdf" target="_blank">Clique para baixar</a>.</p>

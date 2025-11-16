@@ -50,7 +50,8 @@ new Vue({
             habilidades: [],
             equipamentos: [],
             mo: 0,
-            peso: 0
+            peso: 0,
+            nivel: 1 
         },
         novoAtaque: { nome: '', teste: '', dano: '', tipo: '', critico: '', alcance: '' },
         novaHab: '', novoItem: '',
@@ -121,7 +122,11 @@ new Vue({
                 (Number(d.armadura) || 0) +
                 (Number(d.escudo) || 0) +
                 (Number(d.outros) || 0);
-        }
+        },
+          halfLevelValue() {
+            const n = Number(this.personagem.nivel) || 0;
+            return Math.floor(n / 2);
+        },
     },
     watch: {
         'personagem.atributos.for': 'refreshPericiaAtributos',
@@ -306,7 +311,7 @@ new Vue({
         },
 
         totalPericia(p) {
-            const hl = Number(p.halfLevel) || 0;
+            const hl = this.halfLevelValue;
             const at = this.attrBonusFromSigla(p.atrib); // usa bônus calculado
             const tr = Number(p.treino) || 0;
             const ot = Number(p.outros) || 0;
