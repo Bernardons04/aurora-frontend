@@ -107,7 +107,8 @@ new Vue({
             { nome: 'Religião', atrib: 'SAB', halfLevel: 0, atributo: 0, treino: 0, outros: 0 },
             { nome: 'Sobrevivência', atrib: 'SAB', halfLevel: 0, atributo: 0, treino: 0, outros: 0 },
             { nome: 'Vontade', atrib: 'SAB', halfLevel: 0, atributo: 0, treino: 0, outros: 0 }
-        ]
+        ],
+        activeTab: 'ficha',
     },
     computed: {
         bonusDestreza() {
@@ -122,6 +123,14 @@ new Vue({
                 (Number(d.outros) || 0);
         }
     },
+    watch: {
+        'personagem.atributos.for': 'refreshPericiaAtributos',
+        'personagem.atributos.des': 'refreshPericiaAtributos',
+        'personagem.atributos.sau': 'refreshPericiaAtributos',
+        'personagem.atributos.int': 'refreshPericiaAtributos',
+        'personagem.atributos.sab': 'refreshPericiaAtributos',
+        'personagem.atributos.car': 'refreshPericiaAtributos'
+    },
     mounted() {
         try {
             const saved = localStorage.getItem('aurora.theme');
@@ -134,8 +143,10 @@ new Vue({
     },
     created() {
         this.load();
+        this.refreshPericiaAtributos();
     },
     methods: {
+        setTab(tab) { this.activeTab = tab; },
         applyOriginBonuses() {
             // reverte bônus anterior, se houver
             if (this.appliedOriginSkills.length) {
@@ -279,10 +290,24 @@ new Vue({
             return this.personagem.atributos[k] || 0;
         },
 
+       attrBonus(score) {
+            return (Number(score) || 0) - 10; // regra: bônus = atributo - 10
+        },
+        attrBonusFromSigla(sigla) {
+            const map = { FOR: 'for', DES: 'des', SAU: 'sau', INT: 'int', SAB: 'sab', CAR: 'car' };
+            const key = map[sigla.toUpperCase()] || '';
+            return this.attrBonus(this.personagem.atributos[key]);
+        },
+        refreshPericiaAtributos() {
+            // mantém campo p.atributo sincronizado (se quiser usar em export)
+            this.pericias.forEach(p => {
+                p.atributo = this.attrBonusFromSigla(p.atrib);
+            });
+        },
+
         totalPericia(p) {
-            // Total = halfLevel + atributo + treino + outros
             const hl = Number(p.halfLevel) || 0;
-            const at = Number(p.atributo) || 0;
+            const at = this.attrBonusFromSigla(p.atrib); // usa bônus calculado
             const tr = Number(p.treino) || 0;
             const ot = Number(p.outros) || 0;
             return hl + at + tr + ot;
