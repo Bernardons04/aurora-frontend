@@ -238,11 +238,7 @@ body.theme-dark .section-title {
 .form-control,
 .form-control:disabled,
 .form-select {
-<<<<<<< HEAD
     padding:  .125rem .6rem;
-=======
-    padding: .125rem .75rem;
->>>>>>> ba7876907a976d05096b57e1344b5e569973f5da
     background: transparent;
     color: var(--ink);
     border: 1px solid rgba(0, 0, 0, 0.08);
