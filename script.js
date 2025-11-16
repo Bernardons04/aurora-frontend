@@ -111,6 +111,12 @@ new Vue({
         ],
         activeTab: 'ficha',
         notas: '',
+        showAuth: false,
+        authView: 'login',
+        authForm: { email: '', password: '' },
+        user: null,
+        session: null,
+        apiUrl: 'https://aurora-backend-8xda.onrender.com'
     },
     computed: {
         bonusDestreza() {
@@ -141,7 +147,7 @@ new Vue({
             if (newTab === 'notas') this.$nextTick(() => this.autoGrowNotes());
         },
     },
-    mounted() {
+   mounted() {
         try {
             const saved = localStorage.getItem('aurora.theme');
             if (saved) this.theme = saved;
@@ -151,12 +157,68 @@ new Vue({
         } catch (e) { }
         this.applyTheme();
         this.$nextTick(() => this.autoGrowNotes());
+
+        // Restaura sessão
+        try {
+            const s = localStorage.getItem('aurora.session');
+            if (s) {
+                const parsed = JSON.parse(s);
+                this.user = parsed.user || null;
+                this.session = parsed.session || null;
+            }
+        } catch (_) {}
     },
     created() {
         this.load();
         this.refreshPericiaAtributos();
     },
     methods: {
+         openAuth() {
+            this.showAuth = true;
+            this.authView = 'login';
+        },
+        async handleLogin() {
+            try {
+                const res = await fetch(`${this.apiUrl}/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(this.authForm)
+                });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.error || 'Falha no login');
+
+                this.user = data.user;
+                this.session = data.session;
+                localStorage.setItem('aurora.session', JSON.stringify(data));
+                this.showAuth = false;
+                this.authForm = { email: '', password: '' };
+                Toast.fire({ icon: 'success', title: 'Login efetuado!' });
+            } catch (err) {
+                Toast.fire({ icon: 'error', title: err.message || 'Erro no login.' });
+            }
+        },
+        async handleSignup() {
+            try {
+                const res = await fetch(`${this.apiUrl}/signup`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(this.authForm)
+                });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.error || 'Falha no cadastro');
+
+                Toast.fire({ icon: 'success', title: 'Conta criada! Faça login.' });
+                this.authView = 'login';
+            } catch (err) {
+                Toast.fire({ icon: 'error', title: err.message || 'Erro ao cadastrar.' });
+            }
+        },
+        logout() {
+            this.user = null;
+            this.session = null;
+            localStorage.removeItem('aurora.session');
+            Toast.fire({ icon: 'info', title: 'Você saiu.' });
+        },
         autoGrowNotes() {
             const ta = this.$refs.notesArea;
             if (!ta) return;
@@ -206,41 +268,39 @@ new Vue({
         },
         async uploadAvatarIfNeeded() {
             const foto = this.personagem.foto;
-
-            // 1. Se não tem imagem → não faz nada
             if (!foto) return;
 
-            // 2. Se já é link (começa com http) → não precisa fazer upload
-            if (foto.startsWith("http")) {
+            if (foto.startsWith("http")) return;
+
+            // Requer login para enviar avatar
+            if (!this.session || !this.session.access_token) {
+                Toast.fire({ icon: 'warning', title: 'Entre para enviar o avatar.' });
                 return;
             }
 
-            // 3. É base64 → enviar pro backend
             try {
                 const formData = new FormData();
-
-                // Converter base64 → arquivo
                 const res = await fetch(foto);
                 const blob = await res.blob();
                 const file = new File([blob], "avatar.png", { type: blob.type });
-
                 formData.append("avatar", file);
 
-                const uploadRes = await fetch("https://aurora-backend-8xda.onrender.com/upload-avatar", {
+                const uploadRes = await fetch(`${this.apiUrl}/upload-avatar`, {
                     method: "POST",
+                    headers: { Authorization: `Bearer ${this.session.access_token}` },
                     body: formData
                 });
 
                 const data = await uploadRes.json();
+                if (!uploadRes.ok) throw new Error(data.error || 'Falha no upload');
 
                 if (data.url) {
                     this.personagem.foto = data.url;
-                    console.log("Avatar enviado:", data.url);
+                    Toast.fire({ icon: 'success', title: 'Avatar enviado!' });
                 }
-
             } catch (err) {
                 console.error("Erro ao enviar avatar:", err);
-                Toast.fire({ icon: 'error', title: 'Erro ao enviar avatar!' });
+                Toast.fire({ icon: 'error', title: err.message || 'Erro ao enviar avatar!' });
             }
         },
 

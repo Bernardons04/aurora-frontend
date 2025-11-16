@@ -41,6 +41,12 @@
           <span v-if="theme==='dark'">☀️</span>
           <span v-else>🌙</span>
         </button>
+        <!-- Auth controls -->
+        <button v-if="!user" class="btn btn-gold btn-sm ms-1" @click="openAuth" aria-label="Abrir login">Entrar</button>
+        <div v-else class="d-flex align-items-center gap-2 ms-1">
+          <span class="small text-muted d-none d-md-inline">{{ user.email }}</span>
+          <button class="btn btn-cancel btn-sm" @click="logout">Sair</button>
+        </div>
       </li>
     </ul>
 
@@ -378,6 +384,38 @@
         placeholder="Escreva aqui seus diários, ganchos, NPCs, mapas mentais e tudo mais..."></textarea>
       <div class="text-end mt-2 small text-muted">As notas são salvas ao clicar em Salvar e incluídas no
         Exportar/Importar JSON.</div>
+    </div>
+    <div v-if="showAuth" class="auth-veil">
+      <div class="auth-card pericias-block">
+        <button class="btn-close" @click="showAuth=false" aria-label="Fechar"></button>
+
+        <div class="text-center mb-3">
+          <img src="assets/aurora-logo.png" class="auth-logo mb-2" alt="Aurora">
+          <h4 class="section-title mb-2">{{ authView==='login' ? 'Entrar no Aurora' : 'Criar sua conta' }}</h4>
+          <div class="small text-muted">Acesse para salvar e sincronizar sua ficha</div>
+        </div>
+
+        <form @submit.prevent="authView==='login' ? handleLogin() : handleSignup()">
+          <div class="mb-3">
+            <label class="form-label">Email</label>
+            <input type="email" class="form-control form-control-lg" v-model.trim="authForm.email" required>
+          </div>
+          <div class="mb-2">
+            <label class="form-label">Senha</label>
+            <input type="password" class="form-control form-control-lg" v-model="authForm.password" minlength="6" required>
+          </div>
+
+          <div class="d-grid gap-2 my-3">
+            <button type="submit" class="btn btn-gold btn-lg glow-aurora">
+              {{ authView==='login' ? 'Entrar' : 'Cadastrar' }}
+            </button>
+            <button type="button" class="btn btn-link text-decoration-none"
+                    @click="authView = (authView==='login' ? 'signup' : 'login')">
+              {{ authView==='login' ? 'Não tem conta? Cadastre-se' : 'Já tem conta? Entre' }}
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   </div>
 
