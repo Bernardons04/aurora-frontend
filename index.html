@@ -367,8 +367,11 @@
     </div>
     <div v-if="activeTab==='notas'" class="notas-wrapper">
       <h5 class="section-title mb-3">Notas</h5>
-      <textarea v-model="notas" class="form-control notes-textarea"
-        placeholder="Escreva aqui seus diários, ganchos, NPCs, mapas mentais e tudo mais..."></textarea>
+      <textarea v-model="notas"
+                ref="notesArea"
+                @input="autoGrowNotes"
+                class="form-control notes-textarea"
+                placeholder="Escreva aqui seus diários, ganchos, NPCs, mapas mentais e tudo mais..."></textarea>
       <div class="text-end mt-2 small text-muted">As notas são salvas ao clicar em Salvar e incluídas no Exportar/Importar JSON.</div>
     </div>
   </div>

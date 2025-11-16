@@ -135,7 +135,8 @@ new Vue({
         'personagem.atributos.sau': 'refreshPericiaAtributos',
         'personagem.atributos.int': 'refreshPericiaAtributos',
         'personagem.atributos.sab': 'refreshPericiaAtributos',
-        'personagem.atributos.car': 'refreshPericiaAtributos'
+        'personagem.atributos.car': 'refreshPericiaAtributos',
+         notas() { this.$nextTick(() => this.autoGrowNotes()); } 
     },
     mounted() {
         try {
@@ -146,12 +147,19 @@ new Vue({
             }
         } catch (e) { }
         this.applyTheme();
+        this.$nextTick(() => this.autoGrowNotes());
     },
     created() {
         this.load();
         this.refreshPericiaAtributos();
     },
     methods: {
+        autoGrowNotes() {
+            const ta = this.$refs.notesArea;
+            if (!ta) return;
+            ta.style.height = 'auto';
+            ta.style.height = ta.scrollHeight + 'px';
+        },
         setTab(tab) { this.activeTab = tab; },
         applyOriginBonuses() {
             // reverte bônus anterior, se houver

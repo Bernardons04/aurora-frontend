@@ -560,7 +560,8 @@ body.theme-dark .nav-tabs .nav-link.active {
 }
 .notes-textarea {
   min-height: 65vh;
-  resize: vertical;
+  resize: none;
+  overflow: hidden;
   background: transparent;
   color: var(--ink);
   border: 1px solid var(--paper-edge);
