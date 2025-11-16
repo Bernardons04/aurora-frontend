@@ -31,6 +31,9 @@
       <li class="nav-item">
         <button class="nav-link" :class="{active: activeTab==='livro'}" @click="setTab('livro')">Livro</button>
       </li>
+            <li class="nav-item">
+        <button class="nav-link" :class="{active: activeTab==='notas'}" @click="setTab('notas')">Notas</button>
+      </li>
     </ul>
 
     <!-- CONTEÚDO FICHA -->
@@ -38,7 +41,7 @@
 
       <!-- AÇÕES ACIMA DO HEADER -->
       <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
-        <div>
+        <div class="d-flex">
           <button :class="['btn','me-2', editMode? 'btn-cancel':'btn-edit']" @click="toggleEdit"
             v-if="!editMode">Editar</button>
           <span v-else>
@@ -54,7 +57,7 @@
         </div>
         <div class="d-flex align-items-center gap-2">
           <div class="small text-muted">Modo: <strong>{{ editMode ? 'Edição' : 'Visualização' }}</strong></div>
-          <button class="btn btn-outline-secondary aurora-theme-toggle" @click="toggleTheme"
+          <button class="btn aurora-theme-toggle" @click="toggleTheme"
             :aria-label="theme==='dark' ? 'Alternar para modo claro' : 'Alternar para modo escuro'">
             <span v-if="theme==='dark'">☀️</span>
             <span v-else>🌙</span>
@@ -361,6 +364,12 @@
           <p>Seu navegador não abriu o PDF. <a href="assets/livro.pdf" target="_blank">Clique para baixar</a>.</p>
         </object>
       </div>
+    </div>
+    <div v-if="activeTab==='notas'" class="notas-wrapper">
+      <h5 class="section-title mb-3">Notas</h5>
+      <textarea v-model="notas" class="form-control notes-textarea"
+        placeholder="Escreva aqui seus diários, ganchos, NPCs, mapas mentais e tudo mais..."></textarea>
+      <div class="text-end mt-2 small text-muted">As notas são salvas ao clicar em Salvar e incluídas no Exportar/Importar JSON.</div>
     </div>
   </div>
 

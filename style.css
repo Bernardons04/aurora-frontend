@@ -323,6 +323,9 @@ body.theme-dark .btn-import {
 body.theme-dark .aurora-theme-toggle {
     border-color: rgba(255, 255, 255, 0.14);
 }
+.aurora-theme-toggle:hover {
+    background-color:  var(--ink);
+}
 
 /* Perícias block: parchment panel */
 .pericias-block {
@@ -548,4 +551,22 @@ body.theme-dark .pdf-frame {
 }
 body.theme-dark .nav-tabs .nav-link.active {
   border-color: var(--gold-1);
+}
+.list-group-item {
+    color: var(--ink);
+}
+.nav-tabs{
+    border-color: var(--gold-1);
+}
+.notes-textarea {
+  min-height: 65vh;
+  resize: vertical;
+  background: transparent;
+  color: var(--ink);
+  border: 1px solid var(--paper-edge);
+  white-space: pre-wrap;
+}
+body.theme-dark .notes-textarea {
+  border-color: rgba(255,255,255,0.14);
+  color: var(--ink);
 }

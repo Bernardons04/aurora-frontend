@@ -110,6 +110,7 @@ new Vue({
             { nome: 'Vontade', atrib: 'SAB', halfLevel: 0, atributo: 0, treino: 0, outros: 0 }
         ],
         activeTab: 'ficha',
+        notas: '',
     },
     computed: {
         bonusDestreza() {
@@ -251,7 +252,6 @@ new Vue({
             }
             await this.uploadAvatarIfNeeded();
             this.save();
-            this.exportJson();
             this.editMode = false;
         },
 
@@ -360,17 +360,19 @@ new Vue({
         },
 
         serialize() {
-            return {
+              return {
                 personagem: this.personagem,
                 pericias: this.pericias,
-                appliedOriginSkills: this.appliedOriginSkills
+                appliedOriginSkills: this.appliedOriginSkills,
+                notas: this.notas
             };
         },
 
-        writeFrom(obj) {
+       writeFrom(obj) {
             if (obj.personagem) this.personagem = Object.assign(this.personagem, obj.personagem);
             if (obj.pericias) this.pericias = obj.pericias;
             if (obj.appliedOriginSkills) this.appliedOriginSkills = obj.appliedOriginSkills;
+            if (Object.prototype.hasOwnProperty.call(obj, 'notas')) this.notas = obj.notas || '';
         }
     }
 });
