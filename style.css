@@ -4,32 +4,75 @@
     --gold: #b8860b;
     --muted: #6b6b6b;
     --accent-dark: #5a3f12;
+    --ink: #2d2005;
+    --ink-muted: #6b6b6b;
+    --gold-1: #bfa544;
+    --gold-2: #8f6105;
+    --aurora: #6fd0c3;
+    --paper-edge: rgba(0, 0, 0, 0.06);
+}
+
+body.theme-dark {
+    --bg: #0f1416;
+    --paper: #161b1e;
+    --ink: #f1e9d5;
+    --ink-muted: #cbbf9e;
+    --gold: #d8b65e;
+    --gold-1: #d0b25a;
+    --gold-2: #9a7a2f;
+    --accent-dark: #e7dbba;
+    --aurora: #86e7dc;
 }
 
 body {
-    background: linear-gradient(180deg, var(--bg) 0%, #f6efe0 100%);
-    font-family: 'Inter', system-ui, Arial;
+    color: var(--ink);
+     font-family: 'IM Fell English SC', serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+
+    /* parchment-like layered background */
+    background: var(--bg)
+}
+
+
+html,
+body {
+    height: 100%;
+}
+
+body.theme-dark {
+    background:var(--bg);
 }
 
 /* Blocos de inputs do header */
 .aurora-header-block {
-    background: #fff;
-    border: 4px solid #bfa544;
-    border-top: 0;
-    padding: 6px 10px;
-    border-radius: 6px;
-    width: fit-content;
-    min-width: 260px;
-    box-shadow: 0 0 6px rgba(0, 0, 0, 0.2);
+    background: var(--paper);
+    border: 1px solid var(--paper-edge);
+    box-shadow:
+        inset 0 0 0 2px rgba(191, 165, 68, 0.22),
+        0 8px 18px rgba(0, 0, 0, 0.12);
+    border-radius: 10px;
+    padding: 10px 12px;
 }
 
-/* Labels do topo */
+body.theme-dark .aurora-header-block {
+    box-shadow:
+        inset 0 0 0 2px rgba(208, 178, 90, 0.20),
+        0 8px 18px rgba(0, 0, 0, 0.45);
+    border-color: rgba(255, 255, 255, 0.06);
+}
+
 .aurora-header-label {
-    font-family: "Cinzel", serif;
-    font-size: 18px;
-    font-weight: bold;
-    /* text-transform: uppercase; */
-    color: #3a2a00;
+    font-family: 'IM Fell English SC', serif;
+    font-weight: 800;
+    letter-spacing: 0.6px;
+    color: var(--accent-dark);
+    text-transform: uppercase;
+    margin-bottom: 4px;
+}
+
+body.theme-dark .aurora-header-label {
+    color: var(--gold-1);
 }
 
 /* Inputs */
@@ -44,13 +87,21 @@ body {
 } */
 
 .aurora-display-text {
-    font-family: "Cinzel", serif;
-    font-size: 28px;
-    color: #d3b676;
-    /* dourado claro */
-    text-shadow: 0 0 2px rgba(191, 165, 68, 0.6);
+    font-family: 'IM Fell English SC', serif;
+    font-size: 18px;
     letter-spacing: 0.5px;
-    font-weight: bold;
+    font-weight: 800;
+    color: transparent;
+    background: linear-gradient(180deg, #e5d1a0 20%, #cba55a 80%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    text-shadow: 0 1px 0 rgba(0, 0, 0, 0.05);
+}
+
+body.theme-dark .aurora-display-text {
+    background: linear-gradient(180deg, #fff1c9 20%, #d6b96a 80%);
+    -webkit-background-clip: text;
+    background-clip: text;
 }
 
 .aurora-header-input:disabled {
@@ -86,10 +137,24 @@ body {
 
 /* Container geral da moldura e da foto */
 .portrait-frame {
-    width: 380px;
-    height: 380px;
+    width: 100%;
+    max-width: 340px;
+    aspect-ratio: 1/1;
     position: relative;
     margin: 0 auto;
+    border-radius: 12px;
+    background: linear-gradient(180deg, #fffdf5, #fff7e6);
+    border: 1px solid var(--paper-edge);
+    box-shadow:
+        inset 0 0 0 4px rgba(191, 165, 68, 0.12),
+        0 12px 26px rgba(0, 0, 0, 0.12);
+}
+
+body.theme-dark .portrait-frame {
+    background: linear-gradient(180deg, #181c1f, #14181b);
+    box-shadow:
+        inset 0 0 0 4px rgba(208, 178, 90, 0.12),
+        0 18px 34px rgba(0, 0, 0, 0.55);
 }
 
 /* Moldura do avatar (sua imagem) */
@@ -117,6 +182,13 @@ body {
     bottom: 0;
     left: 0;
     right: 0;
+    transition: transform 0.25s ease, filter 0.25s ease;
+    border: 3px solid rgba(191, 165, 68, 0.15);
+}
+
+.portrait-frame:hover .foto-personagem {
+  transform: scale(1.02);
+  filter: saturate(1.02);
 }
 
 /* Input fica invisível, mas clicável */
@@ -130,14 +202,68 @@ body {
 
 .section-title {
     color: var(--accent-dark);
-    font-weight: 700;
-    margin-top: 8px;
+    font-family: "Cinzel", serif;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    display: inline-flex;
+    align-items: center;
+    gap: .6rem;
+}
+
+.section-title::after {
+    content: '';
+    display: inline-block;
+    height: 2px;
+    width: 72px;
+    background: linear-gradient(90deg, transparent, var(--gold-1), transparent);
+    border-radius: 2px;
+}
+
+body.theme-dark .section-title {
+    color: var(--gold-1);
 }
 
 .attr-label {
     background: linear-gradient(180deg, rgba(184, 134, 11, 0.12), rgba(184, 134, 11, 0.02));
     color: var(--accent-dark);
+    border-color: var(--gold-1);
     font-weight: 700;
+}
+
+.form-control,
+.form-control:disabled,
+.form-select {
+    padding:  .125rem .75rem;
+    background: transparent;
+    color: var(--ink);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.form-control:focus {
+    background: transparent !important;
+}
+
+.form-control::placeholder {
+    color: rgba(0, 0, 0, 0.35);
+}
+
+body.theme-dark .form-control,
+body.theme-dark .form-select {
+    color: var(--ink);
+    border-color: rgba(255, 255, 255, 0.12);
+}
+
+body.theme-dark .form-control::placeholder {
+    color: rgba(255, 255, 255, 0.45);
+}
+
+.form-control:focus,
+.form-select:focus,
+.btn:focus {
+    box-shadow: 0 0 0 0.2rem rgba(111, 208, 195, 0.25);
+    border-color: var(--aurora);
+    outline: none;
 }
 
 .attr-input .form-control {
@@ -145,44 +271,71 @@ body {
     font-weight: 700;
 }
 
-.btn-gold {
-    background: linear-gradient(180deg, var(--gold), #9b6f06);
-    color: white;
-    border: none;
+.btn-gold,
+.btn-edit {
+    background: linear-gradient(180deg, var(--gold), var(--gold-2));
+    color: #fff !important;
+    border: 0;
+    box-shadow: 0 6px 12px rgba(154, 122, 47, 0.25);
 }
 
-.btn-edit {
-    background: linear-gradient(180deg, var(--gold), #8f6105);
-    color: white;
-    border: none;
+.btn-gold:hover,
+.btn-edit:hover {
+    filter: brightness(1.05);
 }
 
 .btn-save {
     background: linear-gradient(180deg, #3b7a3b, #2f5f2f);
-    color: white;
-    border: none;
+    color: #fff !important;
+    border: 0;
 }
 
 .btn-cancel {
-    background: #ddd;
-    color: #222;
-    border: none;
+    background: rgba(0, 0, 0, 0.06);
+    color: var(--ink);
+    border: 1px solid var(--gold-1);
+}
+.btn-cancel:hover {
+     border: 1px solid var(--gold-1);   
 }
 
-.btn-export {
-    background: transparent;
-    border: 1px solid rgba(0, 0, 0, 0.06);
-}
-
+.btn-export,
 .btn-import {
     background: transparent;
-    border: 1px solid rgba(0, 0, 0, 0.06);
+    border: 1px solid var(--paper-edge);
 }
 
+body.theme-dark .btn-export,
+body.theme-dark .btn-import {
+    border-color: rgba(255, 255, 255, 0.14);
+    color: var(--ink);
+}
+
+.aurora-theme-toggle {
+    border-color: var(--paper-edge);
+}
+
+body.theme-dark .aurora-theme-toggle {
+    border-color: rgba(255, 255, 255, 0.14);
+}
+
+/* Perícias block: parchment panel */
 .pericias-block {
     background: var(--paper);
-    border-radius: 8px;
-    border: 1px solid rgba(0, 0, 0, 0.06);
+    border: 1px solid var(--paper-edge);
+    border-radius: 10px;
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.10);
+}
+
+body.theme-dark .pericias-block {
+    border-color: rgba(255, 255, 255, 0.08);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.45);
+}
+
+/* Perícia row small polish */
+.pericia-row input {
+    padding: 6px;
+    background: transparent;
 }
 
 .pericia-row input[readonly] {
@@ -196,10 +349,16 @@ body {
 
 .list-group-item {
     background: transparent;
+    border-color: var(--paper-edge);
+}
+
+body.theme-dark .list-group-item {
+    border-color: rgba(255, 255, 255, 0.08);
 }
 
 .small {
     font-size: 12px;
+    color: var(--ink-muted);
 }
 
 @media (max-width: 992px) {
@@ -216,7 +375,7 @@ body {
 
 /* Toast RPG Aurora */
 .aurora-toast-popup {
-    border: 3px solid #bfa544;
+  border: 3px solid var(--gold-1);
     /* dourado Aurora */
     border-radius: 6px;
     box-shadow: 0 0 12px rgba(0, 0, 0, 0.45);
@@ -224,13 +383,25 @@ body {
 }
 
 .aurora-toast-title {
-    font-family: "Cinzel Decorative", serif !important;
+    font-family: 'IM Fell English SC', serif !important;
     font-size: 18px !important;
     letter-spacing: 0.5px;
-    color: #3a2a00 !important;
+     color: var(--accent-dark) !important;
 }
 
 .aurora-toast-progress {
-    background: #bfa544 !important;
+    background: var(--gold-1) !important;
     /* barra dourada */
+}
+
+@media (min-width: 576px) {
+  .aurora-logo { max-width: 420px; }
+}
+@media (max-width: 576px) {
+  .aurora-display-text { font-size: 12px; }
+  .section-title::after { width: 48px; }
+}
+
+.text-muted {
+    color: var(--ink-muted) !important;
 }

@@ -21,7 +21,9 @@ new Vue({
     el: '#app',
     data: {
         editMode: false,
-        placeholder: 'https://via.placeholder.com/600x600?text=Sem+imagem',
+        theme: 'light',
+        originalSnapshot: '',
+        placeholder: 'assets/default-avatar.png',
         personagem: {
             nome: '',
             dom: '',
@@ -83,10 +85,28 @@ new Vue({
             { nome: 'Vontade', atrib: 'SAB', halfLevel: 0, atributo: 0, treino: 0, outros: 0 }
         ]
     },
+    mounted() {
+        try {
+            const saved = localStorage.getItem('aurora.theme');
+            if (saved) this.theme = saved;
+            else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                this.theme = 'dark';
+            }
+        } catch (e) { }
+        this.applyTheme();
+    },
     created() {
         this.load();
     },
     methods: {
+        toggleTheme() {
+            this.theme = this.theme === 'dark' ? 'light' : 'dark';
+            this.applyTheme();
+            try { localStorage.setItem('aurora.theme', this.theme); } catch (e) { }
+        },
+        applyTheme() {
+            document.body.classList.toggle('theme-dark', this.theme === 'dark');
+        },
         async uploadAvatarIfNeeded() {
             const foto = this.personagem.foto;
 
@@ -129,6 +149,12 @@ new Vue({
 
         toggleEdit() {
             this.editMode = true;
+            this.originalSnapshot = JSON.stringify(this.serialize());
+        },
+
+        hasChanges() {
+            const current = JSON.stringify(this.serialize());
+            return current !== this.originalSnapshot;
         },
 
         cancelEdit() {
@@ -137,6 +163,10 @@ new Vue({
         },
 
         async saveAndExport() {
+            if (!this.hasChanges()) {
+                this.editMode = false;
+                return;
+            }
             await this.uploadAvatarIfNeeded();
             this.save();
             this.exportJson();
