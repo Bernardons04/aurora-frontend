@@ -80,14 +80,20 @@
           </div>
 
 
-          <div class="aurora-header-block">
+           <div class="aurora-header-block">
             <label class="aurora-header-label">Origem</label>
 
             <div v-if="!editMode" class="aurora-display-text">
               {{ personagem.origem || '—' }}
             </div>
 
-            <input v-else type="text" class="form-control" v-model="personagem.origem">
+            <!-- Select de Origens (aplica bônus automaticamente) -->
+            <select v-else class="form-select" v-model="personagem.origem" @change="applyOriginBonuses">
+              <option value="">Selecione uma origem...</option>
+              <option v-for="o in origens" :key="o.nome" :value="o.nome">
+                {{ o.nome }}
+              </option>
+            </select>
           </div>
 
         </div>

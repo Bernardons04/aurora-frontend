@@ -456,3 +456,69 @@ body.theme-dark .defesa-total-display {
 .defesa-breakdown {
   font-style:italic;
 }
+.form-select option {
+    font-family: 'IM Fell English SC', serif;
+    background: #fffdf5;
+    color: var(--ink);
+}
+
+/* Dark mode */
+body.theme-dark .form-select {
+    color: var(--ink);
+    background: linear-gradient(180deg, #181c1f 0%, #14181b 100%);
+    border-color: rgba(255,255,255,.14);
+}
+
+body.theme-dark .form-select option {
+    background: #161b1e;
+    color: var(--ink);
+}
+
+/* Mantém realce de foco já existente */
+.form-select:focus {
+    box-shadow: 0 0 0 0.2rem rgba(111, 208, 195, 0.25);
+    border-color: var(--aurora);
+    outline: none;
+}
+
+/* ========== Scrollbar Aurora (WebKit) ========== */
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+*::-webkit-scrollbar-track {
+  background: var(--paper);
+  border-radius: 8px;
+}
+*::-webkit-scrollbar-thumb {
+  background: var(--gold-2);
+  border-radius: 8px;
+  border: 2px solid var(--paper);
+}
+*::-webkit-scrollbar-thumb:hover {
+  filter: brightness(1.05);
+}
+
+/* Dark */
+body.theme-dark *::-webkit-scrollbar-track {
+  background: #121619;
+}
+body.theme-dark *::-webkit-scrollbar-thumb {
+  background: var(--gold-1);
+  border-color: #161b1e;
+}
+
+/* Containers específicos (se tiver overflow) */
+.pericias-block::-webkit-scrollbar,
+.list-group::-webkit-scrollbar {
+  width: 8px;
+}
+
+/* ========== Firefox ========== */
+html {
+  scrollbar-width: thin;
+  scrollbar-color: var(--gold-2) var(--paper);
+}
+body.theme-dark {
+  scrollbar-color: var(--gold-2) #14181b;
+}

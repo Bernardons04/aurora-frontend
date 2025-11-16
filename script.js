@@ -54,6 +54,29 @@ new Vue({
         },
         novoAtaque: { nome: '', teste: '', dano: '', tipo: '', critico: '', alcance: '' },
         novaHab: '', novoItem: '',
+        origens: [
+            { nome: 'Guarda da Cidade', skills: ['Luta', 'Percepção'] },
+            { nome: 'Caçador', skills: ['Pontaria', 'Sobrevivência'] },
+            { nome: 'Nobre', skills: ['Diplomacia', 'Nobreza'] },
+            { nome: 'Mercenário', skills: ['Luta', 'Intimidação'] },
+            { nome: 'Rato de Beco', skills: ['Furtividade', 'Ladinagem'] },
+            { nome: 'Erudito', skills: ['Conhecimento', 'Investigação'] },
+            { nome: 'Ferreiro', skills: ['Atletismo', 'Ofício'] },            // Metalurgia -> Ofício
+            { nome: 'Curandeiro', skills: ['Cura', 'Ofício'] },                // Herbalismo -> Ofício
+            { nome: 'Artista de Rua', skills: ['Atuação', 'Enganação'] },
+            { nome: 'Marinheiro', skills: ['Atletismo', 'Reflexos'] },
+            { nome: 'Soldado', skills: ['Luta', 'Guerra'] },
+            { nome: 'Batedor', skills: ['Sobrevivência', 'Percepção'] },
+            { nome: 'Acólito', skills: ['Religião', 'Intuição'] },
+            { nome: 'Charlatão', skills: ['Enganação', 'Jogatina'] },
+            { nome: 'Gladiador', skills: ['Luta', 'Atuação'] },
+            { nome: 'Artesão', skills: ['Ofício', 'Percepção'] },             // Ofício à escolha -> Ofício
+            { nome: 'Fazendeiro', skills: ['Vontade', 'Adestramento'] },
+            { nome: 'Assassino de Guilda', skills: ['Furtividade', 'Iniciativa'] },
+            { nome: 'Investigador', skills: ['Investigação', 'Intuição'] },
+            { nome: 'Membro de Tribo', skills: ['Sobrevivência', 'Intimidação'] }
+        ],
+        appliedOriginSkills: [],
         pericias: [
             { nome: 'Acrobacia', atrib: 'DES', halfLevel: 0, atributo: 0, treino: 0, outros: 0 },
             { nome: 'Adestramento', atrib: 'CAR', halfLevel: 0, atributo: 0, treino: 0, outros: 0 },
@@ -86,7 +109,7 @@ new Vue({
             { nome: 'Vontade', atrib: 'SAB', halfLevel: 0, atributo: 0, treino: 0, outros: 0 }
         ]
     },
-        computed: {
+    computed: {
         bonusDestreza() {
             const des = Number(this.personagem.atributos.des) || 0;
             return des - 10; // regra linear de bônus
@@ -113,6 +136,35 @@ new Vue({
         this.load();
     },
     methods: {
+        applyOriginBonuses() {
+            // reverte bônus anterior, se houver
+            if (this.appliedOriginSkills.length) {
+                this.appliedOriginSkills.forEach(nome => {
+                    const p = this.pericias.find(x => x.nome === nome);
+                    if (p) p.treino = Math.max(0, (Number(p.treino) || 0) - 1);
+                });
+                this.appliedOriginSkills = [];
+            }
+
+            const sel = this.origens.find(o => o.nome === this.personagem.origem);
+            if (!sel) return;
+
+            const applied = [];
+            sel.skills.forEach(skillName => {
+                // mapeia especializações de Ofício para "Ofício" genérico da ficha
+                const match = this.pericias.find(p =>
+                    p.nome === skillName || (skillName.startsWith('Ofício') && p.nome === 'Ofício')
+                );
+                if (match) {
+                    match.treino = (Number(match.treino) || 0) + 1;
+                    applied.push(match.nome);
+                }
+            });
+
+            this.appliedOriginSkills = applied;
+            // persiste junto com a ficha
+            this.save();
+        },
         toggleTheme() {
             this.theme = this.theme === 'dark' ? 'light' : 'dark';
             this.applyTheme();
@@ -280,13 +332,15 @@ new Vue({
         serialize() {
             return {
                 personagem: this.personagem,
-                pericias: this.pericias
+                pericias: this.pericias,
+                appliedOriginSkills: this.appliedOriginSkills
             };
         },
 
         writeFrom(obj) {
             if (obj.personagem) this.personagem = Object.assign(this.personagem, obj.personagem);
             if (obj.pericias) this.pericias = obj.pericias;
+            if (obj.appliedOriginSkills) this.appliedOriginSkills = obj.appliedOriginSkills;
         }
     }
 });
