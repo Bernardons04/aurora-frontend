@@ -136,7 +136,10 @@ new Vue({
         'personagem.atributos.int': 'refreshPericiaAtributos',
         'personagem.atributos.sab': 'refreshPericiaAtributos',
         'personagem.atributos.car': 'refreshPericiaAtributos',
-         notas() { this.$nextTick(() => this.autoGrowNotes()); } 
+         notas() { this.$nextTick(() => this.autoGrowNotes()); } ,
+         activeTab(newTab) {
+            if (newTab === 'notas') this.$nextTick(() => this.autoGrowNotes());
+        },
     },
     mounted() {
         try {
@@ -160,7 +163,10 @@ new Vue({
             ta.style.height = 'auto';
             ta.style.height = ta.scrollHeight + 'px';
         },
-        setTab(tab) { this.activeTab = tab; },
+        setTab(tab) {
+             this.activeTab = tab; 
+            if (tab === 'notas') this.$nextTick(() => this.autoGrowNotes());
+        },
         applyOriginBonuses() {
             // reverte bônus anterior, se houver
             if (this.appliedOriginSkills.length) {

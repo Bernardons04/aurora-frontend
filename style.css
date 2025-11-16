@@ -318,6 +318,7 @@ body.theme-dark .btn-import {
 
 .aurora-theme-toggle {
     border-color: var(--paper-edge);
+    padding: .17rem .3rem;
 }
 
 body.theme-dark .aurora-theme-toggle {
@@ -387,6 +388,7 @@ body.theme-dark .list-group-item {
     /* dourado Aurora */
     border-radius: 6px;
     box-shadow: 0 0 12px rgba(0, 0, 0, 0.45);
+    background: var(--paper) !important;
     font-family: "Cinzel", serif;
 }
 
@@ -394,11 +396,11 @@ body.theme-dark .list-group-item {
     font-family: 'IM Fell English SC', serif !important;
     font-size: 18px !important;
     letter-spacing: 0.5px;
-    color: var(--accent-dark) !important;
+    color: var(--ink) !important;
 }
 
 .aurora-toast-progress {
-    background: var(--gold-1) !important;
+    background: var(--ink) !important;
     /* barra dourada */
 }
 

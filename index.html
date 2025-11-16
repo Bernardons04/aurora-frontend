@@ -34,6 +34,15 @@
             <li class="nav-item">
         <button class="nav-link" :class="{active: activeTab==='notas'}" @click="setTab('notas')">Notas</button>
       </li>
+  <li class="nav-item ms-auto d-flex align-items-center gap-2 px-2">
+    <div class="small text-muted mb-0">Modo: <strong>{{ editMode ? 'Edição' : 'Visualização' }}</strong></div>
+    <button class="btn aurora-theme-toggle"
+            @click="toggleTheme"
+            :aria-label="theme==='dark' ? 'Alternar para modo claro' : 'Alternar para modo escuro'">
+      <span v-if="theme==='dark'">☀️</span>
+      <span v-else>🌙</span>
+    </button>
+  </li>
     </ul>
 
     <!-- CONTEÚDO FICHA -->
@@ -54,14 +63,6 @@
             Importar JSON
             <input type="file" ref="importFile" @change="handleImport" accept="application/json" style="display:none" />
           </label>
-        </div>
-        <div class="d-flex align-items-center gap-2">
-          <div class="small text-muted">Modo: <strong>{{ editMode ? 'Edição' : 'Visualização' }}</strong></div>
-          <button class="btn aurora-theme-toggle" @click="toggleTheme"
-            :aria-label="theme==='dark' ? 'Alternar para modo claro' : 'Alternar para modo escuro'">
-            <span v-if="theme==='dark'">☀️</span>
-            <span v-else>🌙</span>
-          </button>
         </div>
       </div>
 
