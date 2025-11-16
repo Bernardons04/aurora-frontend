@@ -209,9 +209,12 @@ body.theme-dark .aurora-display-text {
     display: inline-flex;
     align-items: center;
     gap: .6rem;
+    width: 100%;
+    justify-content: center;
 }
 
-.section-title::after {
+.section-title::after,
+.section-title::before {
     content: '';
     display: inline-block;
     height: 2px;
