@@ -1,0 +1,236 @@
+:root {
+    --bg: #efe7cf;
+    --paper: #fffdf5;
+    --gold: #b8860b;
+    --muted: #6b6b6b;
+    --accent-dark: #5a3f12;
+}
+
+body {
+    background: linear-gradient(180deg, var(--bg) 0%, #f6efe0 100%);
+    font-family: 'Inter', system-ui, Arial;
+}
+
+/* Blocos de inputs do header */
+.aurora-header-block {
+    background: #fff;
+    border: 4px solid #bfa544;
+    border-top: 0;
+    padding: 6px 10px;
+    border-radius: 6px;
+    width: fit-content;
+    min-width: 260px;
+    box-shadow: 0 0 6px rgba(0, 0, 0, 0.2);
+}
+
+/* Labels do topo */
+.aurora-header-label {
+    font-family: "Cinzel", serif;
+    font-size: 18px;
+    font-weight: bold;
+    /* text-transform: uppercase; */
+    color: #3a2a00;
+}
+
+/* Inputs */
+/* .aurora-header-input {
+    border: none;
+    outline: none;
+    width: 100%;
+    background: transparent;
+    font-family: "Cinzel", serif;
+    font-size: 18px;
+    color: #000;
+} */
+
+.aurora-display-text {
+    font-family: "Cinzel", serif;
+    font-size: 28px;
+    color: #d3b676;
+    /* dourado claro */
+    text-shadow: 0 0 2px rgba(191, 165, 68, 0.6);
+    letter-spacing: 0.5px;
+    font-weight: bold;
+}
+
+.aurora-header-input:disabled {
+    opacity: 0.5;
+}
+
+/* Logo */
+.aurora-logo {
+    height: 70px;
+    user-select: none;
+}
+
+.container {
+    max-width: 1100px;
+}
+
+.aurora-logo {
+    max-width: 380px;
+    min-width: 280px;
+    height: auto;
+    filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.12));
+}
+
+.portrait-wrap {
+    width: 260px;
+    height: 260px;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 6px solid rgba(184, 134, 11, 0.15);
+    background: linear-gradient(180deg, #fffdf5, #fff7e6);
+    position: relative;
+}
+
+/* Container geral da moldura e da foto */
+.portrait-frame {
+    width: 380px;
+    height: 380px;
+    position: relative;
+    margin: 0 auto;
+}
+
+/* Moldura do avatar (sua imagem) */
+.frame-overlay {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    /* evita interferência no click */
+    z-index: 3;
+}
+
+/* A foto dentro do círculo */
+.foto-personagem {
+    position: absolute;
+    inset: 0;
+    width: 80%;
+    height: 80%;
+    border-radius: 50%;
+    object-fit: cover;
+    z-index: 2;
+    margin: auto;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+
+/* Input fica invisível, mas clicável */
+.file-input {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+    z-index: 10;
+}
+
+.section-title {
+    color: var(--accent-dark);
+    font-weight: 700;
+    margin-top: 8px;
+}
+
+.attr-label {
+    background: linear-gradient(180deg, rgba(184, 134, 11, 0.12), rgba(184, 134, 11, 0.02));
+    color: var(--accent-dark);
+    font-weight: 700;
+}
+
+.attr-input .form-control {
+    text-align: center;
+    font-weight: 700;
+}
+
+.btn-gold {
+    background: linear-gradient(180deg, var(--gold), #9b6f06);
+    color: white;
+    border: none;
+}
+
+.btn-edit {
+    background: linear-gradient(180deg, var(--gold), #8f6105);
+    color: white;
+    border: none;
+}
+
+.btn-save {
+    background: linear-gradient(180deg, #3b7a3b, #2f5f2f);
+    color: white;
+    border: none;
+}
+
+.btn-cancel {
+    background: #ddd;
+    color: #222;
+    border: none;
+}
+
+.btn-export {
+    background: transparent;
+    border: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.btn-import {
+    background: transparent;
+    border: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.pericias-block {
+    background: var(--paper);
+    border-radius: 8px;
+    border: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.pericia-row input[readonly] {
+    background: transparent;
+    border: none;
+}
+
+.pericia-row input {
+    padding: 6px;
+}
+
+.list-group-item {
+    background: transparent;
+}
+
+.small {
+    font-size: 12px;
+}
+
+@media (max-width: 992px) {
+    .portrait-frame {
+        width: 200px;
+        height: 200px;
+    }
+
+    .foto-personagem {
+        width: 80%;
+        height: 80%;
+    }
+}
+
+/* Toast RPG Aurora */
+.aurora-toast-popup {
+    border: 3px solid #bfa544;
+    /* dourado Aurora */
+    border-radius: 6px;
+    box-shadow: 0 0 12px rgba(0, 0, 0, 0.45);
+    font-family: "Cinzel", serif;
+}
+
+.aurora-toast-title {
+    font-family: "Cinzel Decorative", serif !important;
+    font-size: 18px !important;
+    letter-spacing: 0.5px;
+    color: #3a2a00 !important;
+}
+
+.aurora-toast-progress {
+    background: #bfa544 !important;
+    /* barra dourada */
+}
