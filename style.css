@@ -63,6 +63,7 @@ body.theme-dark .aurora-header-block {
 }
 
 .aurora-header-label {
+    font-size: 14px;
     font-family: 'IM Fell English SC', serif;
     font-weight: 800;
     letter-spacing: 0.6px;
@@ -234,7 +235,7 @@ body.theme-dark .section-title {
 .form-control,
 .form-control:disabled,
 .form-select {
-    padding:  .125rem .75rem;
+    padding:  .125rem .6rem;
     background: transparent;
     color: var(--ink);
     border: 1px solid rgba(0, 0, 0, 0.08);
@@ -404,4 +405,35 @@ body.theme-dark .list-group-item {
 
 .text-muted {
     color: var(--ink-muted) !important;
+}
+
+.defesa-block {
+  position: relative;
+}
+
+.defesa-total-display {
+  background: linear-gradient(180deg,var(--gold-1),var(--gold-2));
+  color:#fff;
+  border-radius:10px;
+  padding:10px 8px;
+  min-height:100%;
+  text-align:center;
+  box-shadow:0 4px 12px rgba(0,0,0,.25);
+  font-family:'IM Fell English SC',serif;
+}
+.defesa-total-value {
+  font-size:36px;
+  line-height:1;
+  font-weight:700;
+  text-shadow:0 1px 2px rgba(0,0,0,.4);
+}
+@media (max-width: 767.98px) {
+  .defesa-total-display { min-height:110px; }
+}
+body.theme-dark .defesa-total-display {
+  box-shadow:0 6px 14px rgba(0,0,0,0.6);
+}
+
+.defesa-breakdown {
+  font-style:italic;
 }

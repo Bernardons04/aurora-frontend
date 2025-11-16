@@ -45,6 +45,7 @@ new Vue({
                 max: 0,
                 atual: 0
             },
+            defesa: { armadura: 0, escudo: 0, outros: 0 },
             ataques: [],
             habilidades: [],
             equipamentos: [],
@@ -84,6 +85,19 @@ new Vue({
             { nome: 'Sobrevivência', atrib: 'SAB', halfLevel: 0, atributo: 0, treino: 0, outros: 0 },
             { nome: 'Vontade', atrib: 'SAB', halfLevel: 0, atributo: 0, treino: 0, outros: 0 }
         ]
+    },
+        computed: {
+        bonusDestreza() {
+            const des = Number(this.personagem.atributos.des) || 0;
+            return des - 10; // regra linear de bônus
+        },
+        totalDefesa() {
+            const d = this.personagem.defesa;
+            return 10 + this.bonusDestreza +
+                (Number(d.armadura) || 0) +
+                (Number(d.escudo) || 0) +
+                (Number(d.outros) || 0);
+        }
     },
     mounted() {
         try {
