@@ -35,7 +35,7 @@
         <button class="nav-link" :class="{active: activeTab==='notas'}" @click="setTab('notas')">Notas</button>
       </li>
   <li class="nav-item ms-auto d-flex align-items-center gap-2 px-2">
-    <div class="small text-muted mb-0">Modo: <strong>{{ editMode ? 'Edição' : 'Visualização' }}</strong></div>
+    <div class="small text-muted mb-0 d-none d-sm-inline"><strong>Mudar para Tema:</strong></div>
     <button class="btn aurora-theme-toggle"
             @click="toggleTheme"
             :aria-label="theme==='dark' ? 'Alternar para modo claro' : 'Alternar para modo escuro'">
