@@ -30,7 +30,8 @@ new Vue({
             origem: '',
             foto: '',
             atributos: {
-                for: 0, des: 0,
+                for: 0,
+                des: 0,
                 sau: 0,
                 int: 0,
                 sab: 0,
