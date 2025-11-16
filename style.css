@@ -238,7 +238,7 @@ body.theme-dark .section-title {
 .form-control,
 .form-control:disabled,
 .form-select {
-    padding:  .125rem .6rem;
+    padding: .125rem .6rem;
     background: transparent;
     color: var(--ink);
     border: 1px solid rgba(0, 0, 0, 0.08);
@@ -319,13 +319,15 @@ body.theme-dark .btn-import {
 .aurora-theme-toggle {
     border-color: var(--paper-edge);
     padding: .17rem .3rem;
+    transition: ease-in-out .25s;
 }
 
 body.theme-dark .aurora-theme-toggle {
     border-color: rgba(255, 255, 255, 0.14);
 }
+
 .aurora-theme-toggle:hover {
-    background-color:  var(--ink);
+    box-shadow: 0px 0px 11px 2px rgb(191, 165, 68, 0.62);
 }
 
 /* Perícias block: parchment panel */
@@ -432,35 +434,41 @@ body.theme-dark .list-group-item {
 }
 
 .defesa-block {
-  position: relative;
+    position: relative;
 }
 
 .defesa-total-display {
-  background: linear-gradient(180deg,var(--gold-1),var(--gold-2));
-  color:#fff;
-  border-radius:10px;
-  padding:10px 8px;
-  min-height:100%;
-  text-align:center;
-  box-shadow:0 4px 12px rgba(0,0,0,.25);
-  font-family:'IM Fell English SC',serif;
+    background: linear-gradient(180deg, var(--gold-1), var(--gold-2));
+    color: #fff;
+    border-radius: 10px;
+    padding: 10px 8px;
+    min-height: 100%;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, .25);
+    font-family: 'IM Fell English SC', serif;
 }
+
 .defesa-total-value {
-  font-size:36px;
-  line-height:1;
-  font-weight:700;
-  text-shadow:0 1px 2px rgba(0,0,0,.4);
+    font-size: 36px;
+    line-height: 1;
+    font-weight: 700;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, .4);
 }
+
 @media (max-width: 767.98px) {
-  .defesa-total-display { min-height:110px; }
+    .defesa-total-display {
+        min-height: 110px;
+    }
 }
+
 body.theme-dark .defesa-total-display {
-  box-shadow:0 6px 14px rgba(0,0,0,0.6);
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.6);
 }
 
 .defesa-breakdown {
-  font-style:italic;
+    font-style: italic;
 }
+
 .form-select option {
     font-family: 'IM Fell English SC', serif;
     background: #fffdf5;
@@ -471,7 +479,7 @@ body.theme-dark .defesa-total-display {
 body.theme-dark .form-select {
     color: var(--ink);
     background: linear-gradient(180deg, #181c1f 0%, #14181b 100%);
-    border-color: rgba(255,255,255,.14);
+    border-color: rgba(255, 255, 255, .14);
 }
 
 body.theme-dark .form-select option {
@@ -488,88 +496,101 @@ body.theme-dark .form-select option {
 
 /* ========== Scrollbar Aurora (WebKit) ========== */
 *::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
+    width: 10px;
+    height: 10px;
 }
+
 *::-webkit-scrollbar-track {
-  background: var(--paper);
-  border-radius: 8px;
+    background: var(--paper);
+    border-radius: 8px;
 }
+
 *::-webkit-scrollbar-thumb {
-  background: var(--gold-2);
-  border-radius: 8px;
-  border: 2px solid var(--paper);
+    background: var(--gold-2);
+    border-radius: 8px;
+    border: 2px solid var(--paper);
 }
+
 *::-webkit-scrollbar-thumb:hover {
-  filter: brightness(1.05);
+    filter: brightness(1.05);
 }
 
 /* Dark */
 body.theme-dark *::-webkit-scrollbar-track {
-  background: #121619;
+    background: #121619;
 }
+
 body.theme-dark *::-webkit-scrollbar-thumb {
-  background: var(--gold-1);
-  border-color: #161b1e;
+    background: var(--gold-1);
+    border-color: #161b1e;
 }
 
 /* Containers específicos (se tiver overflow) */
 .pericias-block::-webkit-scrollbar,
 .list-group::-webkit-scrollbar {
-  width: 8px;
+    width: 8px;
 }
 
 /* ========== Firefox ========== */
 html {
-  scrollbar-width: thin;
-  scrollbar-color: var(--gold-2) var(--paper);
+    scrollbar-width: thin;
+    scrollbar-color: var(--gold-2) var(--paper);
 }
+
 body.theme-dark {
-  scrollbar-color: var(--gold-2) #14181b;
+    scrollbar-color: var(--gold-2) #14181b;
 }
 
 .pdf-frame {
-  width: 100%;
-  height: 80vh;
-  border: 1px solid var(--paper-edge);
-  border-radius: 10px;
-  background: var(--paper);
-  box-shadow: 0 6px 14px rgba(0,0,0,.12);
-  overflow: hidden;
+    width: 100%;
+    height: 80vh;
+    border: 1px solid var(--paper-edge);
+    border-radius: 10px;
+    background: var(--paper);
+    box-shadow: 0 6px 14px rgba(0, 0, 0, .12);
+    overflow: hidden;
 }
+
 body.theme-dark .pdf-frame {
-  background: var(--paper);
-  box-shadow: 0 10px 24px rgba(0,0,0,.55);
-  border-color: rgba(255,255,255,0.08);
+    background: var(--paper);
+    box-shadow: 0 10px 24px rgba(0, 0, 0, .55);
+    border-color: rgba(255, 255, 255, 0.08);
 }
+
 .nav-tabs .nav-link {
-  font-family: 'IM Fell English SC', serif;
-  font-weight: 700;
+    font-family: 'IM Fell English SC', serif;
+    font-weight: 700;
 }
+
 .nav-tabs .nav-link.active {
-  background: linear-gradient(180deg,var(--gold-1),var(--gold-2));
-  color:#fff;
-  border-color: var(--gold-2) var(--gold-2) #fff;
+    background: linear-gradient(180deg, var(--gold-1), var(--gold-2));
+    color: #fff;
+    border-color: var(--gold-2) var(--gold-2) #fff;
 }
+
 body.theme-dark .nav-tabs .nav-link.active {
-  border-color: var(--gold-1);
+    border-color: var(--gold-1);
 }
+
 .list-group-item {
     color: var(--ink);
 }
-.nav-tabs{
+
+.nav-tabs {
     border-color: var(--gold-1);
 }
+
 .notes-textarea {
-  min-height: 65vh;
-  resize: none;
-  overflow: hidden;
-  background: transparent;
-  color: var(--ink);
-  border: 1px solid var(--paper-edge);
-  white-space: pre-wrap;
+    min-height: 65vh;
+    resize: none;
+    overflow: hidden;
+    background: transparent;
+    color: var(--ink);
+    border: 1px solid var(--paper-edge);
+    white-space: pre-wrap;
 }
+
 body.theme-dark .notes-textarea {
-  border-color: rgba(255,255,255,0.14);
-  color: var(--ink);
+    border-color: rgba(255, 255, 255, 0.14);
+    color: var(--ink);
 }
