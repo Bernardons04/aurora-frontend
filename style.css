@@ -34,7 +34,6 @@ body {
     background: var(--bg)
 }
 
-
 html,
 body {
     height: 100%;
@@ -54,15 +53,8 @@ body.theme-dark {
     position: relative;
 }
 
-body.theme-dark .aurora-header-block {
-    box-shadow:
-        inset 0 0 0 2px rgba(208, 178, 90, 0.20),
-        0 8px 18px rgba(0, 0, 0, 0.45);
-    border-color: rgba(255, 255, 255, 0.06);
-}
-
 .aurora-header-label {
-    font-size: 14px;
+    font-size: 12px;
     font-family: 'IM Fell English SC', serif;
     font-weight: 800;
     letter-spacing: 0.6px;
@@ -93,7 +85,7 @@ body.theme-dark .aurora-header-label {
 
 .aurora-display-text {
     font-family: 'IM Fell English SC', serif;
-    font-size: 18px;
+    font-size: 22px;
     letter-spacing: 0.5px;
     font-weight: 800;
     color: transparent;
