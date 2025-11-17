@@ -67,6 +67,7 @@ body.theme-dark {
     /*margin-bottom: 4px;*/
     position: absolute;
     top: -12px;
+    left: 2px;
     background: var(--paper);
     padding: 4px 6px;
     border-radius: 8px;
