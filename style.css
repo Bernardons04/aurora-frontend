@@ -38,6 +38,23 @@ body {
     background: var(--bg)
 }
 
+.btn-secondary {
+    --bs-btn-color: #fff;
+    --bs-btn-bg: #6E7985;
+    --bs-btn-border-color: #6E7985);
+    --bs-btn-hover-color: #fff;
+    --bs-btn-hover-bg: #303954;
+    --bs-btn-hover-border-color: #303954;
+    --bs-btn-focus-shadow-rgb: 70, 79, 229;
+    --bs-btn-active-color: #fff;
+    --bs-btn-active-bg: #303954;
+    --bs-btn-active-border-color: #303954;
+    --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+    --bs-btn-disabled-color: #e9e9e9;
+    --bs-btn-disabled-bg: #6E7985;
+    --bs-btn-disabled-border-color: #6E7985;
+}
+
 html,
 body {
     height: 100%;
