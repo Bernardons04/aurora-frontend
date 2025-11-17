@@ -322,15 +322,15 @@ body.theme-dark .aurora-theme-toggle {
 /* Perícias block: parchment panel */
 .pericias-block {
     background: var(--paper);
-    border: 1px solid var(--paper-edge);
+    border: 1px solid var(--gold-1);
     border-radius: 10px;
-    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.10);
+    box-shadow: 0 0 4px 1px #d0b25a7a;
 }
 
-body.theme-dark .pericias-block {
+/*body.theme-dark .pericias-block {
     border-color: rgba(255, 255, 255, 0.08);
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.45);
-}
+}*
 
 /* Perícia row small polish */
 .pericia-row input {
