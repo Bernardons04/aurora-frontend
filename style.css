@@ -229,12 +229,12 @@ body.theme-dark .section-title {
 
 .form-control {
   font-size: 22px;
+  padding: .125rem .4rem;
 }
 
 .form-control,
 .form-control:disabled,
 .form-select {
-    padding: .125rem .6rem;
     background: transparent;
     color: var(--ink);
     border: 1px solid rgba(0, 0, 0, 0.08);
