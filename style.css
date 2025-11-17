@@ -303,7 +303,7 @@ body.theme-dark .form-control::placeholder {
 
 .btn-gold:hover,
 .btn-edit:hover {
-    filter: brightness(1.05);
+    box-shadow: 0 0px 12px var(--gold-1);
 }
 
 .btn-save {
