@@ -213,6 +213,7 @@ body.theme-dark .aurora-display-text {
     gap: .6rem;
     width: 100%;
     justify-content: center;
+    text-align: center;
 }
 
 .section-title::after,
@@ -425,7 +426,8 @@ body.theme-dark .list-group-item {
         font-size: 12px;
     }
 
-    .section-title::after {
+    .section-title::after,
+    .section-title::before {
         width: 48px;
     }
 }
