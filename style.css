@@ -298,7 +298,6 @@ body.theme-dark .form-control::placeholder {
     background: linear-gradient(180deg, var(--gold), var(--gold-2));
     color: #fff !important;
     border: 0;
-    box-shadow: 0 6px 12px rgba(154, 122, 47, 0.25);
 }
 
 .btn-gold:hover,
