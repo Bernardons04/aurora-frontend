@@ -227,6 +227,10 @@ body.theme-dark .section-title {
     font-weight: 700;
 }
 
+.form-control {
+  font-size: 22px;
+}
+
 .form-control,
 .form-control:disabled,
 .form-select {
