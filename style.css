@@ -12,6 +12,10 @@
     --paper-edge: rgba(0, 0, 0, 0.06);
 }
 
+[v-cloak] {
+    display: none;
+}
+
 body.theme-dark {
     --bg: #0f1416;
     --paper: #161b1e;
