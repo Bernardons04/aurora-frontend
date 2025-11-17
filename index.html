@@ -54,20 +54,20 @@
     <div v-if="activeTab==='ficha'">
 
       <!-- AÇÕES ACIMA DO HEADER -->
-      <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+      <div class="d-flex end align-items-center mb-3 flex-wrap gap-2">
         <div class="d-flex">
+          <button class="btn btn-export ms-2" @click="exportJson">Exportar</button>
+          <label class="btn btn-import ms-2 mb-0">
+            Importar
+            <input type="file" ref="importFile" @change="handleImport" accept="application/json" style="display:none" />
+          </label>
+          
           <button :class="['btn','me-2', editMode? 'btn-cancel':'btn-edit']" @click="toggleEdit"
             v-if="!editMode">Editar</button>
           <span v-else>
             <button class="btn btn-save me-2" @click="saveAndExport">Salvar</button>
             <button class="btn btn-cancel" @click="cancelEdit">Cancelar</button>
           </span>
-
-          <button class="btn btn-export ms-2" @click="exportJson">Exportar</button>
-          <label class="btn btn-import ms-2 mb-0">
-            Importar
-            <input type="file" ref="importFile" @change="handleImport" accept="application/json" style="display:none" />
-          </label>
         </div>
       </div>
 
