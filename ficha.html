@@ -54,14 +54,14 @@ integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIe
             <!-- Dropdown do usuário -->
             <div class="dropdown" v-if="user">
                 <button class="btn btn-outline-secondary rounded-circle p-0 position-relative"
-                    data-bs-toggle="dropdown" style="width: 48px; height: 48px;">
+                    data-bs-toggle="dropdown" aria-expanded="false" id="userDropdown" style="width: 48px; height: 48px;">
                     <img :src="user.user_metadata.avatar_url || 'assets/default-avatar.png'" class="rounded-circle"
                         width="48" height="48" alt="Avatar">
                     <span class="position-absolute bottom-0 end-0 bg-success border border-light rounded-circle"
                         style="width: 14px; height: 14px;"></span>
                 </button>
 
-                <ul class="dropdown-menu position-absolute end-0 mt-2 p-0" data-bs-display="static">
+                <ul class="dropdown-menu dropdown-menu-end mt-2 p-0" aria-labelledby="userDropdown">
                     <li class="dropdown-item-text px-3 py-2">
                         <div class="d-flex align-items-center gap-3">
                             <img :src="user.user_metadata.avatar_url || 'assets/default-avatar.png'"
