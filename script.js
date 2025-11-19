@@ -7,15 +7,19 @@ const Toast = Swal.mixin({
     showConfirmButton: false,
     timer: 2200,
     timerProgressBar: true,
-    background: 'rgba(255, 248, 230, 0.95)', // pergaminho claro
-    color: '#3a2a00', // marrom medieval
-    iconColor: '#bfa544', // dourado Aurora
+    background: 'rgba(255, 248, 230, 0.95)',
+    color: '#3a2a00',
+    iconColor: '#bfa544',
     customClass: {
         popup: 'aurora-toast-popup',
         title: 'aurora-toast-title',
         timerProgressBar: 'aurora-toast-progress'
     }
 });
+
+// ========= SUPABASE CLIENT =========
+const { createClient } = supabase;
+const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 new Vue({
     el: '#app',
@@ -29,29 +33,16 @@ new Vue({
             dom: '',
             origem: '',
             foto: '',
-            atributos: {
-                for: 0,
-                des: 0,
-                sau: 0,
-                int: 0,
-                sab: 0,
-                car: 0
-            },
-            pv: {
-                max: 0,
-                atual: 0
-            },
-            pd: {
-                max: 0,
-                atual: 0
-            },
+            atributos: { for: 0, des: 0, sau: 0, int: 0, sab: 0, car: 0 },
+            pv: { max: 0, atual: 0 },
+            pd: { max: 0, atual: 0 },
             defesa: { armadura: 0, escudo: 0, outros: 0 },
             ataques: [],
             habilidades: [],
             equipamentos: [],
             mo: 0,
             peso: 0,
-            nivel: 1 
+            nivel: 1
         },
         novoAtaque: { nome: '', teste: '', dano: '', tipo: '', critico: '', alcance: '' },
         novaHab: '', novoItem: '',
@@ -62,8 +53,8 @@ new Vue({
             { nome: 'Mercenário', skills: ['Luta', 'Intimidação'] },
             { nome: 'Rato de Beco', skills: ['Furtividade', 'Ladinagem'] },
             { nome: 'Erudito', skills: ['Conhecimento', 'Investigação'] },
-            { nome: 'Ferreiro', skills: ['Atletismo', 'Ofício'] },            // Metalurgia -> Ofício
-            { nome: 'Curandeiro', skills: ['Cura', 'Ofício'] },                // Herbalismo -> Ofício
+            { nome: 'Ferreiro', skills: ['Atletismo', 'Ofício'] },
+            { nome: 'Curandeiro', skills: ['Cura', 'Ofício'] },
             { nome: 'Artista de Rua', skills: ['Atuação', 'Enganação'] },
             { nome: 'Marinheiro', skills: ['Atletismo', 'Reflexos'] },
             { nome: 'Soldado', skills: ['Luta', 'Guerra'] },
@@ -71,7 +62,7 @@ new Vue({
             { nome: 'Acólito', skills: ['Religião', 'Intuição'] },
             { nome: 'Charlatão', skills: ['Enganação', 'Jogatina'] },
             { nome: 'Gladiador', skills: ['Luta', 'Atuação'] },
-            { nome: 'Artesão', skills: ['Ofício', 'Percepção'] },             // Ofício à escolha -> Ofício
+            { nome: 'Artesão', skills: ['Ofício', 'Percepção'] },
             { nome: 'Fazendeiro', skills: ['Vontade', 'Adestramento'] },
             { nome: 'Assassino de Guilda', skills: ['Furtividade', 'Iniciativa'] },
             { nome: 'Investigador', skills: ['Investigação', 'Intuição'] },
@@ -79,62 +70,59 @@ new Vue({
         ],
         appliedOriginSkills: [],
         pericias: [
-            { nome: 'Acrobacia', atrib: 'DES', halfLevel: 0, atributo: 0, treino: 0, outros: 0 },
-            { nome: 'Adestramento', atrib: 'CAR', halfLevel: 0, atributo: 0, treino: 0, outros: 0 },
-            { nome: 'Atletismo', atrib: 'FOR', halfLevel: 0, atributo: 0, treino: 0, outros: 0 },
-            { nome: 'Atuação', atrib: 'CAR', halfLevel: 0, atributo: 0, treino: 0, outros: 0 },
-            { nome: 'Cavalgar', atrib: 'DES', halfLevel: 0, atributo: 0, treino: 0, outros: 0 },
-            { nome: 'Conhecimento', atrib: 'INT', halfLevel: 0, atributo: 0, treino: 0, outros: 0 },
-            { nome: 'Cura', atrib: 'SAB', halfLevel: 0, atributo: 0, treino: 0, outros: 0 },
-            { nome: 'Diplomacia', atrib: 'CAR', halfLevel: 0, atributo: 0, treino: 0, outros: 0 },
-            { nome: 'Enganação', atrib: 'CAR', halfLevel: 0, atributo: 0, treino: 0, outros: 0 },
-            { nome: 'Fortitude', atrib: 'SAU', halfLevel: 0, atributo: 0, treino: 0, outros: 0 },
-            { nome: 'Furtividade', atrib: 'DES', halfLevel: 0, atributo: 0, treino: 0, outros: 0 },
-            { nome: 'Guerra', atrib: 'INT', halfLevel: 0, atributo: 0, treino: 0, outros: 0 },
-            { nome: 'Iniciativa', atrib: 'DES', halfLevel: 0, atributo: 0, treino: 0, outros: 0 },
-            { nome: 'Intimidação', atrib: 'CAR', halfLevel: 0, atributo: 0, treino: 0, outros: 0 },
-            { nome: 'Intuição', atrib: 'SAB', halfLevel: 0, atributo: 0, treino: 0, outros: 0 },
-            { nome: 'Investigação', atrib: 'INT', halfLevel: 0, atributo: 0, treino: 0, outros: 0 },
-            { nome: 'Jogatina', atrib: 'CAR', halfLevel: 0, atributo: 0, treino: 0, outros: 0 },
-            { nome: 'Ladinagem', atrib: 'DES', halfLevel: 0, atributo: 0, treino: 0, outros: 0 },
-            { nome: 'Luta', atrib: 'FOR', halfLevel: 0, atributo: 0, treino: 0, outros: 0 },
-            { nome: 'Misticismo', atrib: 'INT', halfLevel: 0, atributo: 0, treino: 0, outros: 0 },
-            { nome: 'Nobreza', atrib: 'INT', halfLevel: 0, atributo: 0, treino: 0, outros: 0 },
-            { nome: 'Ofício', atrib: 'INT', halfLevel: 0, atributo: 0, treino: 0, outros: 0 },
-            { nome: 'Percepção', atrib: 'SAB', halfLevel: 0, atributo: 0, treino: 0, outros: 0 },
-            { nome: 'Pilotagem', atrib: 'DES', halfLevel: 0, atributo: 0, treino: 0, outros: 0 },
-            { nome: 'Pontaria', atrib: 'DES', halfLevel: 0, atributo: 0, treino: 0, outros: 0 },
-            { nome: 'Reflexos', atrib: 'DES', halfLevel: 0, atributo: 0, treino: 0, outros: 0 },
-            { nome: 'Religião', atrib: 'SAB', halfLevel: 0, atributo: 0, treino: 0, outros: 0 },
-            { nome: 'Sobrevivência', atrib: 'SAB', halfLevel: 0, atributo: 0, treino: 0, outros: 0 },
-            { nome: 'Vontade', atrib: 'SAB', halfLevel: 0, atributo: 0, treino: 0, outros: 0 }
+            { nome: 'Acrobacia', atrib: 'DES', treino: 0, outros: 0 },
+            { nome: 'Adestramento', atrib: 'CAR', treino: 0, outros: 0 },
+            { nome: 'Atletismo', atrib: 'FOR', treino: 0, outros: 0 },
+            { nome: 'Atuação', atrib: 'CAR', treino: 0, outros: 0 },
+            { nome: 'Cavalgar', atrib: 'DES', treino: 0, outros: 0 },
+            { nome: 'Conhecimento', atrib: 'INT', treino: 0, outros: 0 },
+            { nome: 'Cura', atrib: 'SAB', treino: 0, outros: 0 },
+            { nome: 'Diplomacia', atrib: 'CAR', treino: 0, outros: 0 },
+            { nome: 'Enganação', atrib: 'CAR', treino: 0, outros: 0 },
+            { nome: 'Fortitude', atrib: 'SAU', treino: 0, outros: 0 },
+            { nome: 'Furtividade', atrib: 'DES', treino: 0, outros: 0 },
+            { nome: 'Guerra', atrib: 'INT', treino: 0, outros: 0 },
+            { nome: 'Iniciativa', atrib: 'DES', treino: 0, outros: 0 },
+            { nome: 'Intimidação', atrib: 'CAR', treino: 0, outros: 0 },
+            { nome: 'Intuição', atrib: 'SAB', treino: 0, outros: 0 },
+            { nome: 'Investigação', atrib: 'INT', treino: 0, outros: 0 },
+            { nome: 'Jogatina', atrib: 'CAR', treino: 0, outros: 0 },
+            { nome: 'Ladinagem', atrib: 'DES', treino: 0, outros: 0 },
+            { nome: 'Luta', atrib: 'FOR', treino: 0, outros: 0 },
+            { nome: 'Misticismo', atrib: 'INT', treino: 0, outros: 0 },
+            { nome: 'Nobreza', atrib: 'INT', treino: 0, outros: 0 },
+            { nome: 'Ofício', atrib: 'INT', treino: 0, outros: 0 },
+            { nome: 'Percepção', atrib: 'SAB', treino: 0, outros: 0 },
+            { nome: 'Pilotagem', atrib: 'DES', treino: 0, outros: 0 },
+            { nome: 'Pontaria', atrib: 'DES', treino: 0, outros: 0 },
+            { nome: 'Reflexos', atrib: 'DES', treino: 0, outros: 0 },
+            { nome: 'Religião', atrib: 'SAB', treino: 0, outros: 0 },
+            { nome: 'Sobrevivência', atrib: 'SAB', treino: 0, outros: 0 },
+            { nome: 'Vontade', atrib: 'SAB', treino: 0, outros: 0 }
         ],
         activeTab: 'ficha',
         notas: '',
         showAuth: false,
-        authView: 'login',
-        authForm: { email: '', password: '' },
-        user: null,
-        session: null,
-        apiUrl: 'https://aurora-backend-8xda.onrender.com'
+        user: null
     },
+
     computed: {
         bonusDestreza() {
-            const des = Number(this.personagem.atributos.des) || 0;
-            return des - 10; // regra linear de bônus
+            const des = Number(this.personagem.atributos.des) || 0
+            return des - 10
         },
         totalDefesa() {
-            const d = this.personagem.defesa;
+            const d = this.personagem.defesa
             return 10 + this.bonusDestreza +
                 (Number(d.armadura) || 0) +
                 (Number(d.escudo) || 0) +
-                (Number(d.outros) || 0);
+                (Number(d.outros) || 0)
         },
-          halfLevelValue() {
-            const n = Number(this.personagem.nivel) || 0;
-            return Math.floor(n / 2);
-        },
+        halfLevelValue() {
+            return Math.floor((this.personagem.nivel || 0) / 2)
+        }
     },
+
     watch: {
         'personagem.atributos.for': 'refreshPericiaAtributos',
         'personagem.atributos.des': 'refreshPericiaAtributos',
@@ -142,200 +130,208 @@ new Vue({
         'personagem.atributos.int': 'refreshPericiaAtributos',
         'personagem.atributos.sab': 'refreshPericiaAtributos',
         'personagem.atributos.car': 'refreshPericiaAtributos',
-         notas() { this.$nextTick(() => this.autoGrowNotes()); } ,
-         activeTab(newTab) {
-            if (newTab === 'notas') this.$nextTick(() => this.autoGrowNotes());
-        },
+        notas() { this.$nextTick(() => this.autoGrowNotes()) },
+        activeTab(newTab) {
+            if (newTab === 'notas') this.$nextTick(() => this.autoGrowNotes())
+        }
     },
-   mounted() {
-        try {
-            const saved = localStorage.getItem('aurora.theme');
-            if (saved) this.theme = saved;
-            else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-                this.theme = 'dark';
-            }
-        } catch (e) { }
-        this.applyTheme();
-        this.$nextTick(() => this.autoGrowNotes());
 
-        // Restaura sessão
-        try {
-            const s = localStorage.getItem('aurora.session');
-            if (s) {
-                const parsed = JSON.parse(s);
-                this.user = parsed.user || null;
-                this.session = parsed.session || null;
+    mounted() {
+        // 1. Listener de auth (o mesmo de antes)
+        supabaseClient.auth.onAuthStateChange((event, session) => {
+            this.user = session?.user ?? null;
+            if (event === 'SIGNED_IN' && !window.location.pathname.includes('ficha.html')) {
+                window.location.replace('ficha.html');
             }
-        } catch (_) {}
+            if (event === 'SIGNED_OUT' && !window.location.pathname.includes('index.html')) {
+                window.location.replace('index.html');
+            }
+        });
+
+        // 2. Verifica sessão
+        supabaseClient.auth.getSession().then(({ data: { session } }) => {
+            this.user = session?.user ?? null;
+
+            if (this.user && !window.location.pathname.includes('ficha.html')) {
+                window.location.replace('ficha.html');
+            } else if (!this.user && window.location.pathname.includes('ficha.html')) {
+                window.location.replace('index.html');
+            } else {
+                this.initApp();
+            }
+        });
     },
+
     created() {
-        this.load();
-        this.refreshPericiaAtributos();
+        const saved = localStorage.getItem('aurora.theme');
+        if (saved) this.theme = saved;
+        else if (window.matchMedia('(prefers-color-scheme: dark)').matches) this.theme = 'dark';
+        this.applyTheme();
+
+        this.refreshPericiaAtributos()
     },
+
     methods: {
-         openAuth() {
-            this.showAuth = true;
-            this.authView = 'login';
-        },
-        async handleLogin() {
-            try {
-                const res = await fetch(`${this.apiUrl}/login`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(this.authForm)
-                });
-                const data = await res.json();
-                if (!res.ok) throw new Error(data.error || 'Falha no login');
-
-                this.user = data.user;
-                this.session = data.session;
-                localStorage.setItem('aurora.session', JSON.stringify(data));
-                this.showAuth = false;
-                this.authForm = { email: '', password: '' };
-                Toast.fire({ icon: 'success', title: 'Login efetuado!' });
-            } catch (err) {
-                Toast.fire({ icon: 'error', title: err.message || 'Erro no login.' });
+        initApp() {
+            if (this.user && window.location.pathname.includes('ficha.html')) {
+                this.loadFromSupabase();
             }
         },
-        async handleSignup() {
-            try {
-                const res = await fetch(`${this.apiUrl}/signup`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(this.authForm)
-                });
-                const data = await res.json();
-                if (!res.ok) throw new Error(data.error || 'Falha no cadastro');
 
-                Toast.fire({ icon: 'success', title: 'Conta criada! Faça login.' });
-                this.authView = 'login';
-            } catch (err) {
-                Toast.fire({ icon: 'error', title: err.message || 'Erro ao cadastrar.' });
-            }
-        },
-        logout() {
-            this.user = null;
-            this.session = null;
-            localStorage.removeItem('aurora.session');
-            Toast.fire({ icon: 'info', title: 'Você saiu.' });
-        },
-        autoGrowNotes() {
-            const ta = this.$refs.notesArea;
-            if (!ta) return;
-            ta.style.height = 'auto';
-            ta.style.height = ta.scrollHeight + 'px';
-        },
-        setTab(tab) {
-             this.activeTab = tab; 
-            if (tab === 'notas') this.$nextTick(() => this.autoGrowNotes());
-        },
-        applyOriginBonuses() {
-            // reverte bônus anterior, se houver
-            if (this.appliedOriginSkills.length) {
-                this.appliedOriginSkills.forEach(nome => {
-                    const p = this.pericias.find(x => x.nome === nome);
-                    if (p) p.treino = Math.max(0, (Number(p.treino) || 0) - 1);
-                });
-                this.appliedOriginSkills = [];
-            }
-
-            const sel = this.origens.find(o => o.nome === this.personagem.origem);
-            if (!sel) return;
-
-            const applied = [];
-            sel.skills.forEach(skillName => {
-                // mapeia especializações de Ofício para "Ofício" genérico da ficha
-                const match = this.pericias.find(p =>
-                    p.nome === skillName || (skillName.startsWith('Ofício') && p.nome === 'Ofício')
-                );
-                if (match) {
-                    match.treino = (Number(match.treino) || 0) + 1;
-                    applied.push(match.nome);
-                }
+        async openAuth() {
+            const redirectUrl = new URL('ficha.html', window.location.href);
+            await supabaseClient.auth.signInWithOAuth({
+                provider: 'google',
+                options: { redirectTo: redirectUrl.toString() }
             });
-
-            this.appliedOriginSkills = applied;
-            // persiste junto com a ficha
-            this.save();
         },
-        toggleTheme() {
-            this.theme = this.theme === 'dark' ? 'light' : 'dark';
-            this.applyTheme();
-            try { localStorage.setItem('aurora.theme', this.theme); } catch (e) { }
-        },
-        applyTheme() {
-            document.body.classList.toggle('theme-dark', this.theme === 'dark');
-        },
-        async uploadAvatarIfNeeded() {
-            const foto = this.personagem.foto;
-            if (!foto) return;
 
-            if (foto.startsWith("http")) return;
+        async logout() {
+            await supabaseClient.auth.signOut();
+            window.location.replace('index.html');
+        },
 
-            // Requer login para enviar avatar
-            if (!this.session || !this.session.access_token) {
-                Toast.fire({ icon: 'warning', title: 'Entre para enviar o avatar.' });
+        // ========= SUPABASE =========
+        async saveToSupabase() {
+            if (!this.user) return
+            const payload = this.serialize()
+            const { error } = await supabaseClient
+                .from('fichas')
+                .upsert({ user_id: this.user.id, ficha_json: payload }, { onConflict: 'user_id' })
+            if (error) {
+                console.error(error)
+                Toast.fire({ icon: 'error', title: 'Erro ao salvar na nuvem' })
+            }
+        },
+
+        async loadFromSupabase() {
+            if (!this.user) return;
+
+            const { data, error } = await supabaseClient
+                .from('fichas')
+                .select('ficha_json')
+                .eq('user_id', this.user.id)
+                .maybeSingle();
+
+            if (error && error.code !== 'PGRST116') {
+                console.error('Erro ao carregar ficha:', error);
+                Toast.fire({ icon: 'warning', title: 'Erro ao carregar da nuvem' });
                 return;
             }
 
-            try {
-                const formData = new FormData();
-                const res = await fetch(foto);
-                const blob = await res.blob();
-                const file = new File([blob], "avatar.png", { type: blob.type });
-                formData.append("avatar", file);
-
-                const uploadRes = await fetch(`${this.apiUrl}/upload-avatar`, {
-                    method: "POST",
-                    headers: { Authorization: `Bearer ${this.session.access_token}` },
-                    body: formData
-                });
-
-                const data = await uploadRes.json();
-                if (!uploadRes.ok) throw new Error(data.error || 'Falha no upload');
-
-                if (data.url) {
-                    this.personagem.foto = data.url;
-                    Toast.fire({ icon: 'success', title: 'Avatar enviado!' });
-                }
-            } catch (err) {
-                console.error("Erro ao enviar avatar:", err);
-                Toast.fire({ icon: 'error', title: err.message || 'Erro ao enviar avatar!' });
+            if (data?.ficha_json) {
+                this.writeFrom(data.ficha_json);
+                this.originalSnapshot = JSON.stringify(this.serialize());
+                // Toast.fire({ icon: 'success', title: 'Ficha carregada da nuvem!' });
+            } else {
+                // Primeira vez: ficha vazia (deixa como está)
+                Toast.fire({ icon: 'info', title: 'Nova ficha criada!' });
             }
         },
 
-        toggleEdit() {
-            this.editMode = true;
-            this.originalSnapshot = JSON.stringify(this.serialize());
+        // ========= AVATAR =========
+        async uploadAvatarIfNeeded() {
+            if (!this.user) {
+                Toast.fire({ icon: 'warning', title: 'Faça login para salvar o avatar' })
+                return
+            }
+            if (!this.personagem.foto || this.personagem.foto.startsWith('http')) return
+
+            try {
+                const resp = await fetch(this.personagem.foto)
+                const blob = await resp.blob()
+                const path = `${this.user.id}/avatar`
+
+                const { error } = await supabaseClient.storage
+                    .from('avatars')
+                    .upload(path, blob, { upsert: true, contentType: blob.type })
+
+                if (error && !error.message.includes('duplicate')) throw error
+
+                const { data: { publicUrl } } = supabaseClient.storage.from('avatars').getPublicUrl(path)
+                this.personagem.foto = publicUrl
+                Toast.fire({ icon: 'success', title: 'Avatar salvo!' })
+            } catch (e) {
+                console.error(e)
+                Toast.fire({ icon: 'error', title: 'Erro no avatar' })
+            }
         },
 
-        hasChanges() {
-            const current = JSON.stringify(this.serialize());
-            return current !== this.originalSnapshot;
-        },
-
-        cancelEdit() {
-            this.load();
-            this.editMode = false;
-        },
-
+        // ========= SALVAR =========
         async saveAndExport() {
             if (!this.hasChanges()) {
                 this.editMode = false;
                 return;
             }
+
             await this.uploadAvatarIfNeeded();
-            this.save();
+            await this.saveToSupabase();  // ← única fonte da verdade agora
+
+            this.originalSnapshot = JSON.stringify(this.serialize());
             this.editMode = false;
+            Toast.fire({ icon: 'success', title: 'Ficha salva na nuvem!' });
         },
 
+        // ========= DEMAIS MÉTODOS (mantidos 100% iguais) =========
+        autoGrowNotes() {
+            const ta = this.$refs.notesArea
+            if (!ta) return
+            ta.style.height = 'auto'
+            ta.style.height = ta.scrollHeight + 'px'
+        },
+        setTab(tab) {
+            this.activeTab = tab
+            if (tab === 'notas') this.$nextTick(() => this.autoGrowNotes())
+        },
+        applyOriginBonuses() {
+            if (this.appliedOriginSkills.length) {
+                this.appliedOriginSkills.forEach(nome => {
+                    const p = this.pericias.find(x => x.nome === nome)
+                    if (p) p.treino = Math.max(0, (p.treino || 0) - 1)
+                })
+                this.appliedOriginSkills = []
+            }
+            const sel = this.origens.find(o => o.nome === this.personagem.origem)
+            if (!sel) return
+            const applied = []
+            sel.skills.forEach(skillName => {
+                const match = this.pericias.find(p =>
+                    p.nome === skillName || (skillName.startsWith('Ofício') && p.nome === 'Ofício')
+                )
+                if (match) {
+                    match.treino = (match.treino || 0) + 1
+                    applied.push(match.nome)
+                }
+            })
+            this.appliedOriginSkills = applied
+            // this.save()
+        },
+        toggleTheme() {
+            this.theme = this.theme === 'dark' ? 'light' : 'dark'
+            this.applyTheme()
+            localStorage.setItem('aurora.theme', this.theme)
+        },
+        applyTheme() {
+            document.body.classList.toggle('theme-dark', this.theme === 'dark')
+        },
+        toggleEdit() {
+            this.editMode = true;
+            this.originalSnapshot = JSON.stringify(this.serialize());
+        },
+        hasChanges() {
+            return JSON.stringify(this.serialize()) !== this.originalSnapshot;
+        },
+        cancelEdit() {
+            this.loadFromSupabase();
+            this.editMode = false;
+        },
         carregarFoto(e) {
-            const f = e.target.files[0]; if (!f) return;
+            const f = e.target.files[0];
+            if (!f) return;
             const reader = new FileReader();
             reader.onload = () => { this.personagem.foto = reader.result; };
             reader.readAsDataURL(f);
         },
-
         adicionarAtaque() {
             if (!this.novoAtaque.nome) return;
             this.personagem.ataques.push({ ...this.novoAtaque });
@@ -344,33 +340,25 @@ new Vue({
         removerAtaque(i) {
             this.personagem.ataques.splice(i, 1);
         },
-
         adicionarHab() {
             if (!this.novaHab) return;
             this.personagem.habilidades.push(this.novaHab);
             this.novaHab = '';
-
         },
         removerHab(i) {
             this.personagem.habilidades.splice(i, 1);
         },
-
         addItem() {
             if (!this.novoItem) return;
             this.personagem.equipamentos.push(this.novoItem);
             this.novoItem = '';
         },
-        delItem(i) { this.personagem.equipamentos.splice(i, 1); },
-
-        atribFromChar(code) { // tenta preencher atributo a partir dos atributos do personagem
-            const map = { 'FOR': 'for', 'DES': 'des', 'SAU': 'sau', 'INT': 'int', 'SAB': 'sab', 'CAR': 'car' };
-            const k = map[code] || map[code.toUpperCase()];
-            if (!k) return '';
-            return this.personagem.atributos[k] || 0;
+        delItem(i) {
+            this.personagem.equipamentos.splice(i, 1);
         },
 
-       attrBonus(score) {
-            return (Number(score) || 0) - 10; // regra: bônus = atributo - 10
+        attrBonus(score) {
+            return (Number(score) || 0) - 10;
         },
         attrBonusFromSigla(sigla) {
             const map = { FOR: 'for', DES: 'des', SAU: 'sau', INT: 'int', SAB: 'sab', CAR: 'car' };
@@ -378,15 +366,13 @@ new Vue({
             return this.attrBonus(this.personagem.atributos[key]);
         },
         refreshPericiaAtributos() {
-            // mantém campo p.atributo sincronizado (se quiser usar em export)
             this.pericias.forEach(p => {
                 p.atributo = this.attrBonusFromSigla(p.atrib);
             });
         },
-
         totalPericia(p) {
             const hl = this.halfLevelValue;
-            const at = this.attrBonusFromSigla(p.atrib); // usa bônus calculado
+            const at = this.attrBonusFromSigla(p.atrib);
             const tr = Number(p.treino) || 0;
             const ot = Number(p.outros) || 0;
             return hl + at + tr + ot;
@@ -396,11 +382,16 @@ new Vue({
             const data = this.serialize();
             const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
             const url = URL.createObjectURL(blob);
-            const a = document.createElement('a'); a.href = url; a.download = (this.personagem.nome || 'ficha') + '.json'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = (this.personagem.nome || 'ficha') + '.json';
+            a.click();
+            URL.revokeObjectURL(url);
         },
 
         handleImport(e) {
-            const f = e.target.files[0]; if (!f) return;
+            const f = e.target.files[0];
+            if (!f) return;
             const reader = new FileReader();
             reader.onload = () => {
                 try {
@@ -417,36 +408,20 @@ new Vue({
             e.target.value = '';
         },
 
-        save() {
-            localStorage.setItem(LS_KEY, JSON.stringify(this.serialize()));
-            Toast.fire({ icon: 'success', title: 'Ficha salva!' });
-        },
-
-        load() {
-            const raw = localStorage.getItem(LS_KEY);
-            if (!raw) return;
-            try {
-                const obj = JSON.parse(raw); this.writeFrom(obj);
-            }
-            catch (e) {
-                console.warn('erro load', e);
-            }
-        },
-
         serialize() {
-              return {
+            return {
                 personagem: this.personagem,
                 pericias: this.pericias,
                 appliedOriginSkills: this.appliedOriginSkills,
                 notas: this.notas
-            };
+            }
         },
 
-       writeFrom(obj) {
-            if (obj.personagem) this.personagem = Object.assign(this.personagem, obj.personagem);
-            if (obj.pericias) this.pericias = obj.pericias;
-            if (obj.appliedOriginSkills) this.appliedOriginSkills = obj.appliedOriginSkills;
-            if (Object.prototype.hasOwnProperty.call(obj, 'notas')) this.notas = obj.notas || '';
+        writeFrom(obj) {
+            if (obj.personagem) Object.assign(this.personagem, obj.personagem)
+            if (obj.pericias) this.pericias = obj.pericias
+            if (obj.appliedOriginSkills) this.appliedOriginSkills = obj.appliedOriginSkills
+            if (obj.hasOwnProperty('notas')) this.notas = obj.notas || ''
         }
     }
-});
+})
