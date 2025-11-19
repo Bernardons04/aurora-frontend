@@ -33,6 +33,10 @@
                         @click="setTab('ficha')">Ficha</button>
                 </li>
                 <li class="nav-item">
+                    <button class="nav-link" :class="{active: activeTab==='poderes'}"
+                        @click="setTab('poderes')">Dom</button>
+                </li>
+                <li class="nav-item">
                     <button class="nav-link" :class="{active: activeTab==='livro'}"
                         @click="setTab('livro')">Livro</button>
                 </li>
@@ -137,7 +141,10 @@
                                 {{ personagem.dom || '—' }}
                             </div>
 
-                            <input v-else type="text" class="form-control" v-model="personagem.dom">
+                            <select v-else class="form-select" v-model="personagem.dom">
+                                <option value="">Selecione um dom...</option>
+                                <option v-for="dom in dons" :key="dom" :value="dom">{{ dom }}</option>
+                            </select>
                         </div>
 
                         <!-- Nível (novo) -->
@@ -426,6 +433,87 @@
                         </div>
                     </div>
 
+                </div>
+            </div>
+        </div>
+        <div v-if="activeTab==='poderes'" class="poderes-wrapper fade-in">
+
+            <div v-if="!personagem.dom" class="text-center py-5">
+                <h4 class="text-muted">Selecione um Dom na aba "Ficha" para ver seus poderes.</h4>
+            </div>
+
+            <div v-else-if="!currentDomData" class="text-center py-5">
+                <h4 class="text-muted">Os dados para o dom "{{personagem.dom}}" não foram encontrados.</h4>
+            </div>
+            <div v-else>
+                <!-- Header da Aba Poderes -->
+                <div class="row align-items-center mb-4">
+                    <!-- Spacer Esquerda (apenas desktop) para balancear o layout e garantir o centro exato -->
+                    <div class="col-md-3 d-none d-md-block"></div>
+
+                    <!-- Título Centralizado -->
+                    <div class="col-12 col-md-6 text-center">
+                        <h2 class="section-title mb-0">{{ personagem.dom }}</h2>
+                        <div class="small text-muted mt-1">Atributo Chave: <strong>{{ currentDomData.atributo
+                                }}</strong></div>
+                    </div>
+
+                    <!-- Pontos à Direita (Centralizado no mobile, Direita no desktop) -->
+                    <div class="col-12 col-md-3 d-flex justify-content-center justify-content-md-end mt-3 mt-md-0">
+                        <div class="points-display">
+                            <div class="points-label">Pontos de Dom</div>
+                            <div class="points-value" :class="{'text-danger': pontosDisponiveis < 0}">
+                                {{ pontosGastos }} / {{ personagem.nivel }}
+                            </div>
+                            <div class="small text-muted" v-if="pontosDisponiveis > 0">
+                                {{ pontosDisponiveis }} disponível(is)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row g-4">
+                    <!-- Loop pelas 3 Linhas (Ataque, Defesa, Efeitos) -->
+                    <div class="col-lg-4 col-md-6" v-for="(linha, tipo) in currentDomData.linhas" :key="tipo">
+                        <div class="power-column">
+                            <h5 class="power-col-title">{{ tipo }}</h5>
+                            <div class="power-col-subtitle">{{ linha.titulo }}</div>
+
+                            <div class="power-tree">
+                                <!-- Loop pelos Níveis (1, 2, 3) -->
+                                <div v-for="poder in linha.poderes" :key="poder.nome" class="power-card-wrapper">
+
+                                    <!-- Conector Visual -->
+                                    <div v-if="poder.nivel > 1" class="power-connector"
+                                        :class="{ 'active': hasPower(poder.nome) }"></div>
+
+                                    <div class="power-card" :class="{ 
+                         'learned': hasPower(poder.nome), 
+                         'available': canBuy(poder, tipo),
+                         'locked': !hasPower(poder.nome) && !canBuy(poder, tipo)
+                       }" @click="togglePower(poder, tipo)">
+
+                                        <div class="d-flex justify-content-between align-items-start mb-1">
+                                            <span class="badge bg-dark-gold">Nível {{ poder.nivel }}</span>
+                                            <i v-if="hasPower(poder.nome)"
+                                                class="bi bi-check-circle-fill text-success"></i>
+                                            <i v-else-if="canBuy(poder, tipo)" class="bi bi-unlock text-muted"></i>
+                                            <i v-else class="bi bi-lock-fill text-muted opacity-50"></i>
+                                        </div>
+
+                                        <h6 class="power-name">{{ poder.nome }}</h6>
+
+                                        <div class="power-meta">
+                                            <span><i class="bi bi-lightning-charge"></i> {{ poder.custo }}</span>
+                                            <span><i class="bi bi-hourglass-split"></i> {{ poder.acao }}</span>
+                                        </div>
+
+                                        <p class="power-desc">{{ poder.desc }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
