@@ -396,9 +396,17 @@ new Vue({
       // === ADICIONAR PODER ===
       if (!this.canBuy(poder, tipoLinha)) {
         if (this.pontosDisponiveis <= 0) {
-          Toast.fire({ icon: 'error', title: 'Pontos insuficientes!' });
+          Swal.fire({
+            icon: 'error',
+            title: 'Pontos insuficientes!',
+            showConfirmButton: true,
+          });
         } else {
-          Toast.fire({ icon: 'error', title: 'Pré-requisito não atendido!' });
+          Swal.fire({
+            icon: 'error',
+            title: 'Pré-requisito não atendido!',
+            showConfirmButton: true,
+          });
         }
         return;
       }
@@ -446,7 +454,11 @@ new Vue({
         .upsert({ user_id: this.user.id, ficha_json: payload }, { onConflict: 'user_id' })
       if (error) {
         console.error(error)
-        Toast.fire({ icon: 'error', title: 'Erro ao salvar na nuvem' })
+        Swal.fire({
+          icon: 'error',
+          title: 'Erro ao salvar na nuvem!',
+          showConfirmButton: true,
+        });
       }
     },
 
@@ -499,7 +511,11 @@ new Vue({
         Toast.fire({ icon: 'success', title: 'Avatar salvo!' })
       } catch (e) {
         console.error(e)
-        Toast.fire({ icon: 'error', title: 'Erro no avatar' })
+        Swal.fire({
+          icon: 'error',
+          title: 'Erro no avatar!',
+          showConfirmButton: true,
+        });
       }
     },
 
@@ -647,7 +663,11 @@ new Vue({
           Toast.fire({ icon: 'success', title: 'Ficha importada!' });
         }
         catch (err) {
-          Toast.fire({ icon: 'error', title: 'JSON inválido!' });
+          Swal.fire({
+            icon: 'error',
+            title: 'JSON inválido!',
+            showConfirmButton: true,
+          });
         }
       };
       reader.readAsText(f);
