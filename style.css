@@ -159,7 +159,7 @@ body.theme-dark {
 
 .dropdown-item-text small {
     color: var(--ink-muted);
-    font-size: 13px;
+    font-size: 16px;
 }
 
 /* Itens do menu */
