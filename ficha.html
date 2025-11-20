@@ -206,6 +206,9 @@ integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIe
                 <!-- ATRIBUTOS -->
                 <h5 class="section-title">Atributos</h5>
                 <div class="row g-2 mb-3 attrs-wrap pericias-block p-3 mb-3 mt-2">
+                    <span class="text-center w-100 mt-0 mb-2">
+                        Total: {{ totalAtributos }}
+                    </span>
                     <div v-for="(val,key) in personagem.atributos" :key="key" class="col-4"
                         :class="{ 'mt-0': key === 'car' || key === 'des' || key === 'for' }">
                         <div class="input-group attr-input">

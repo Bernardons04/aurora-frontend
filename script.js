@@ -278,6 +278,15 @@ new Vue({
       const des = Number(this.personagem.atributos.des) || 0
       return des - 10
     },
+    totalAtributos() {
+      const attrs = this.personagem.atributos;
+      return (attrs.for || 0) +
+        (attrs.des || 0) +
+        (attrs.sau || 0) +
+        (attrs.int || 0) +
+        (attrs.sab || 0) +
+        (attrs.car || 0);
+    },
     totalDefesa() {
       const d = this.personagem.defesa
       return 10 + this.bonusDestreza +
