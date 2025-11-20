@@ -395,7 +395,7 @@ new Vue({
         if (this.user) {
           await this.saveToSupabase();
           this.originalSnapshot = JSON.stringify(this.serialize()); // atualiza snapshot para não aparecer como "modificado"
-          Toast.fire({ icon: 'info', title: 'Poder removido e salvo na nuvem!' });
+          // Toast.fire({ icon: 'info', title: 'Poder removido e salvo na nuvem!' });
         }
         else {
           Toast.fire({ icon: 'info', title: 'Poder removido (offline)' });
@@ -432,7 +432,7 @@ new Vue({
       if (this.user) {
         await this.saveToSupabase();
         this.originalSnapshot = JSON.stringify(this.serialize());
-        Toast.fire({ icon: 'success', title: 'Poder aprendido e salvo na nuvem!' });
+        // Toast.fire({ icon: 'success', title: 'Poder aprendido e salvo na nuvem!' });
       } else {
         Toast.fire({ icon: 'success', title: 'Poder aprendido!' });
       }
