@@ -387,7 +387,8 @@ new Vue({
           await this.saveToSupabase();
           this.originalSnapshot = JSON.stringify(this.serialize()); // atualiza snapshot para não aparecer como "modificado"
           Toast.fire({ icon: 'info', title: 'Poder removido e salvo na nuvem!' });
-        } else {
+        }
+        else {
           Toast.fire({ icon: 'info', title: 'Poder removido (offline)' });
         }
         return;
@@ -401,7 +402,8 @@ new Vue({
             title: 'Pontos insuficientes!',
             showConfirmButton: true,
           });
-        } else {
+        }
+        else {
           Swal.fire({
             icon: 'error',
             title: 'Pré-requisito não atendido!',
@@ -481,7 +483,8 @@ new Vue({
         this.writeFrom(data.ficha_json);
         this.originalSnapshot = JSON.stringify(this.serialize());
         // Toast.fire({ icon: 'success', title: 'Ficha carregada da nuvem!' });
-      } else {
+      }
+      else {
         // Primeira vez: ficha vazia (deixa como está)
         Toast.fire({ icon: 'info', title: 'Nova ficha criada!' });
       }
@@ -509,7 +512,8 @@ new Vue({
         const { data: { publicUrl } } = supabaseClient.storage.from('avatars').getPublicUrl(path)
         this.personagem.foto = publicUrl
         Toast.fire({ icon: 'success', title: 'Avatar salvo!' })
-      } catch (e) {
+      }
+      catch (e) {
         console.error(e)
         Swal.fire({
           icon: 'error',
