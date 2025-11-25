@@ -584,10 +584,11 @@ new Vue({
 
       const map = L.map('map-container', {
         crs: L.CRS.Simple,
-        minZoom: -2,
+        minZoom: -5, // Começa baixo para permitir o cálculo inicial
         maxZoom: 2,
-        zoomSnap: 0.5,
-        attributionControl: false
+        zoomSnap: 0.1, // Permite frações de zoom para encaixe perfeito
+        attributionControl: false,
+        maxBoundsViscosity: 1.0 // Impede que o mapa seja arrastado para fora (efeito elástico rígido)
       });
 
       // Define os limites da imagem no mapa
@@ -596,7 +597,16 @@ new Vue({
       const bounds = new L.LatLngBounds(southWest, northEast);
 
       L.imageOverlay(url, bounds).addTo(map);
+
+      // 1. Encaixa a imagem na tela
       map.fitBounds(bounds);
+
+      // 2. Define o zoom mínimo como o zoom atual (fit). 
+      // Isso impede o usuário de diminuir o zoom além do tamanho da imagem.
+      map.setMinZoom(map.getBoundsZoom(bounds));
+
+      // 3. Restringe a navegação (pan) estritamente aos limites da imagem
+      map.setMaxBounds(bounds);
 
       // 1. Carregar Marcadores Salvos no Personagem
       if (this.personagem.marcadores && this.personagem.marcadores.length > 0) {
@@ -630,7 +640,7 @@ new Vue({
           // CORREÇÃO: Usamos a coordenada LatLng direta do clique.
           // Não convertemos mais para pixels, evitando erros de projeção.
           const novoMarcador = {
-            coords: [e.latlng.lat, e.latlng.lng], 
+            coords: [e.latlng.lat, e.latlng.lng],
             titulo: formValues[0],
             desc: formValues[1]
           };
