@@ -1060,3 +1060,234 @@ body.theme-dark .power-connector {
     from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: translateY(0); }
 }
+
+/* === ESTILOS DO MAPA MINIMALISTA === */
+
+/* Moldura do Mapa */
+.map-frame-border {
+    border: 2px solid var(--gold-1);
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    background: #000;
+}
+
+/* Cursor de Mira */
+.cursor-crosshair {
+    cursor: crosshair !important;
+}
+
+/* Botão Flutuante (FAB) */
+.map-floating-actions {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    z-index: 1000; /* Acima do Leaflet */
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.btn-map-fab {
+    background: rgba(255, 253, 245, 0.9); /* Papel quase opaco */
+    color: var(--ink);
+    border: 1px solid var(--gold-1);
+    padding: 8px 16px;
+    border-radius: 30px; /* Pill shape */
+    font-family: 'IM Fell English SC', serif;
+    font-weight: bold;
+    font-size: 14px;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    backdrop-filter: blur(4px);
+}
+
+.btn-map-fab:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(184, 134, 11, 0.4);
+    background: #fff;
+}
+
+/* Estado Ativo (Modo de Cancelar) */
+.btn-map-fab.active {
+    background: rgba(45, 32, 5, 0.9); /* Tinta escura */
+    color: #ff6b6b;
+    border-color: #ff6b6b;
+}
+
+.btn-map-fab.active:hover {
+    background: #000;
+    box-shadow: 0 0 15px rgba(255, 107, 107, 0.4);
+}
+
+/* Indicador Central (HUD) */
+.map-hud-indicator {
+    position: absolute;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
+    background: rgba(0, 0, 0, 0.85);
+    border: 1px solid var(--gold-1);
+    padding: 8px 24px;
+    border-radius: 8px;
+    color: var(--gold-1);
+    font-family: 'IM Fell English SC', serif;
+    text-align: center;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.6);
+    pointer-events: none; /* Deixa clicar através dele */
+    animation: slideDownFade 0.3s ease-out;
+    backdrop-filter: blur(4px);
+}
+
+/* Ponto pulsante */
+.pulsing-dot {
+    width: 8px;
+    height: 8px;
+    background-color: #ff4444;
+    border-radius: 50%;
+    display: inline-block;
+    box-shadow: 0 0 0 rgba(255, 68, 68, 0.4);
+    animation: pulse-red 1.5s infinite;
+}
+
+@keyframes pulse-red {
+    0% {
+        box-shadow: 0 0 0 0 rgba(255, 68, 68, 0.7);
+    }
+    70% {
+        box-shadow: 0 0 0 10px rgba(255, 68, 68, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(255, 68, 68, 0);
+    }
+}
+
+@keyframes slideDownFade {
+    from { opacity: 0; transform: translate(-50%, -20px); }
+    to { opacity: 1; transform: translate(-50%, 0); }
+}
+
+/* Dark Mode Adjustments */
+body.theme-dark .btn-map-fab {
+    background: rgba(22, 27, 30, 0.9);
+    color: var(--gold-1);
+    border-color: var(--gold-1);
+}
+
+body.theme-dark .btn-map-fab:hover {
+    background: #1f262b;
+}
+/* Container Principal (Popup) */
+.swal2-popup {
+    background: var(--paper) !important;
+    border: 2px solid var(--gold-1) !important;
+    border-radius: 12px !important;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.5) !important;
+    font-family: 'IM Fell English SC', serif !important;
+    padding: 2em !important;
+}
+
+/* Título */
+.swal2-title {
+    color: var(--accent-dark) !important;
+    font-family: "Cinzel", serif !important;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 1.6em !important;
+}
+
+body.theme-dark .swal2-title {
+    color: var(--gold-1) !important;
+}
+
+/* Conteúdo de Texto */
+.swal2-html-container, .swal2-content {
+    color: var(--ink) !important;
+    font-size: 1.1em !important;
+}
+
+/* Botão Confirmar (Estilo .btn-gold) */
+.swal2-confirm {
+    background: linear-gradient(180deg, var(--gold), var(--gold-2)) !important;
+    color: #fff !important;
+    border: 1px solid var(--gold-2) !important;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2) !important;
+    font-family: 'IM Fell English SC', serif !important;
+    font-weight: bold !important;
+    padding: 10px 24px !important;
+}
+
+.swal2-confirm:focus {
+    box-shadow: 0 0 0 3px rgba(184, 134, 11, 0.3) !important;
+}
+
+/* Botão Cancelar (Estilo .btn-cancel) */
+.swal2-cancel {
+    background: transparent !important;
+    color: var(--ink) !important;
+    border: 1px solid var(--gold-1) !important;
+    font-family: 'IM Fell English SC', serif !important;
+    font-weight: bold !important;
+    padding: 10px 24px !important;
+}
+
+.swal2-cancel:hover {
+    background: rgba(0,0,0,0.05) !important;
+}
+
+/* Inputs dentro do Alert (ex: Nome do Marcador) */
+.swal2-input, .swal2-textarea {
+    background: rgba(0,0,0,0.03) !important;
+    border: 1px solid var(--gold-1) !important;
+    color: var(--ink) !important;
+    font-family: 'IM Fell English SC', serif !important;
+    box-shadow: none !important;
+}
+
+.swal2-input:focus, .swal2-textarea:focus {
+    border-color: var(--aurora) !important;
+    box-shadow: 0 0 0 2px rgba(111, 208, 195, 0.2) !important;
+}
+
+/* Ícones (Sucesso, Erro, etc) */
+.swal2-icon.swal2-success {
+    border-color: #2f5f2f !important;
+    color: #2f5f2f !important;
+}
+.swal2-icon.swal2-success [class^=swal2-success-line] {
+    background-color: #2f5f2f !important;
+}
+.swal2-icon.swal2-error {
+    border-color: #8f2f2f !important;
+    color: #8f2f2f !important;
+}
+.swal2-icon.swal2-warning {
+    border-color: var(--gold) !important;
+    color: var(--gold) !important;
+}
+
+/* Ajustes Específicos para Dark Mode */
+body.theme-dark .swal2-popup {
+    background: #161b1e !important; /* Cor sólida para garantir legibilidade */
+}
+
+body.theme-dark .swal2-input, 
+body.theme-dark .swal2-textarea {
+    background: rgba(255,255,255,0.05) !important;
+    border-color: rgba(255,255,255,0.2) !important;
+    color: var(--ink) !important;
+}
+
+body.theme-dark .swal2-cancel {
+    border-color: rgba(255,255,255,0.2) !important;
+    color: var(--ink) !important;
+}
+
+body.theme-dark .swal2-cancel:hover {
+    background: rgba(255,255,255,0.05) !important;
+}

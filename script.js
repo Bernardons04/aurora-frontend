@@ -156,8 +156,6 @@ const Toast = Swal.mixin({
   showConfirmButton: false,
   timer: 2200,
   timerProgressBar: true,
-  background: 'rgba(255, 248, 230, 0.95)',
-  color: '#3a2a00',
   iconColor: '#bfa544',
   customClass: {
     popup: 'aurora-toast-popup',
@@ -177,6 +175,8 @@ new Vue({
     theme: 'light',
     originalSnapshot: '',
     placeholder: 'assets/default-avatar.png',
+    mapInstance: null,
+    mapAddMode: false,
     personagem: {
       nome: '',
       dom: '',
@@ -189,6 +189,7 @@ new Vue({
       ataques: [],
       habilidades: [],
       equipamentos: [],
+      marcadores: [],
       poderes: [],
       mo: 0,
       peso: 0,
@@ -309,6 +310,7 @@ new Vue({
     notas() { this.$nextTick(() => this.autoGrowNotes()) },
     activeTab(newTab) {
       if (newTab === 'notas') this.$nextTick(() => this.autoGrowNotes())
+      if (newTab === 'mapa') this.$nextTick(() => this.initMap())
     }
   },
 
@@ -557,6 +559,139 @@ new Vue({
     setTab(tab) {
       this.activeTab = tab
       if (tab === 'notas') this.$nextTick(() => this.autoGrowNotes())
+      if (tab === 'mapa') {
+        this.$nextTick(() => {
+          // Pequeno delay para garantir que a div #map-container esteja visível e com tamanho definido
+          setTimeout(() => this.initMap(), 100);
+        });
+      }
+    },
+    toggleMapAddMode() {
+      this.mapAddMode = !this.mapAddMode;
+    },
+    initMap() {
+      if (!document.getElementById('map-container')) return;
+
+      if (this.mapInstance) {
+        this.mapInstance.remove();
+        this.mapInstance = null;
+      }
+
+      // CONFIGURAÇÃO (Mantenha seus valores de w, h e url)
+      const w = 1920;
+      const h = 1080;
+      const url = 'assets/solara.png';
+
+      const map = L.map('map-container', {
+        crs: L.CRS.Simple,
+        minZoom: -2,
+        maxZoom: 2,
+        zoomSnap: 0.5,
+        attributionControl: false
+      });
+
+      // Define os limites da imagem no mapa
+      const southWest = map.unproject([0, h], map.getMaxZoom() - 1);
+      const northEast = map.unproject([w, 0], map.getMaxZoom() - 1);
+      const bounds = new L.LatLngBounds(southWest, northEast);
+
+      L.imageOverlay(url, bounds).addTo(map);
+      map.fitBounds(bounds);
+
+      // 1. Carregar Marcadores Salvos no Personagem
+      if (this.personagem.marcadores && this.personagem.marcadores.length > 0) {
+        this.personagem.marcadores.forEach((m, index) => {
+          this.addMarkerToMapInstance(map, m, index);
+        });
+      }
+
+      // 2. Evento de Clique para Adicionar Novo
+      map.on('click', async (e) => {
+        if (!this.mapAddMode) return;
+
+        // Pede informações ao usuário
+        const { value: formValues } = await Swal.fire({
+          title: 'Novo Local',
+          html:
+            '<input id="swal-input1" class="swal2-input" placeholder="Nome do Local">' +
+            '<textarea id="swal-input2" class="swal2-textarea" placeholder="Descrição/Notas"></textarea>',
+          focusConfirm: false,
+          showCancelButton: true,
+          confirmButtonColor: '#8b7355',
+          preConfirm: () => {
+            return [
+              document.getElementById('swal-input1').value,
+              document.getElementById('swal-input2').value
+            ]
+          }
+        });
+
+        if (formValues && formValues[0]) {
+          // CORREÇÃO: Usamos a coordenada LatLng direta do clique.
+          // Não convertemos mais para pixels, evitando erros de projeção.
+          const novoMarcador = {
+            coords: [e.latlng.lat, e.latlng.lng], 
+            titulo: formValues[0],
+            desc: formValues[1]
+          };
+
+          // Salva no Vue Data
+          if (!this.personagem.marcadores) this.$set(this.personagem, 'marcadores', []);
+          this.personagem.marcadores.push(novoMarcador);
+
+          // Adiciona visualmente no mapa agora
+          this.addMarkerToMapInstance(map, novoMarcador, this.personagem.marcadores.length - 1);
+
+          // Salva no banco
+          this.saveAndExport();
+
+          // Sai do modo de adição
+          this.mapAddMode = false;
+
+          Toast.fire({ icon: 'success', title: 'Local marcado no mapa!' });
+        }
+      });
+
+      this.mapInstance = map;
+    },
+    addMarkerToMapInstance(map, data, index) {
+      // CORREÇÃO: Usamos as coordenadas salvas diretamente.
+      // O Leaflet sabe exatamente onde colocar.
+      const marker = L.marker(data.coords).addTo(map);
+
+      // Popup com botão de excluir
+      const popupContent = `
+            <div class="text-center">
+                <strong style="color: #8b7355; font-family: 'IM Fell English SC', serif; font-size: 1.2em;">${data.titulo}</strong>
+                <hr style="margin: 4px 0;">
+                <p style="margin: 0 0 8px 0; font-size: 0.9em;">${data.desc || ''}</p>
+                <button class="btn btn-sm btn-outline-danger" style="font-size: 0.7rem; padding: 2px 6px;" 
+                    onclick="document.getElementById('app').__vue__.deleteMarker(${index})">
+                    <i class="bi bi-trash"></i> Remover
+                </button>
+            </div>
+        `;
+
+      marker.bindPopup(popupContent);
+    },
+
+    deleteMarker(index) {
+      Swal.fire({
+        title: 'Remover marcador?',
+        text: "Isso não pode ser desfeito.",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Sim, remover!'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.personagem.marcadores.splice(index, 1);
+          this.saveAndExport();
+          this.initMap(); // Recarrega o mapa para atualizar os índices e remover o pino
+          Toast.fire({ icon: 'success', title: 'Marcador removido.' });
+        }
+      })
     },
     applyOriginBonuses() {
       if (this.appliedOriginSkills.length) {
