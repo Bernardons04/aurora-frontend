@@ -580,7 +580,7 @@ new Vue({
       // CONFIGURAÇÃO (Mantenha seus valores de w, h e url)
       const w = 1920;
       const h = 1080;
-      const url = 'assets/solara.png';
+      const url = '/assets/Solara.png';
 
       const map = L.map('map-container', {
         crs: L.CRS.Simple,
