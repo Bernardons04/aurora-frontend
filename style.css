@@ -535,6 +535,11 @@ body.theme-dark .aurora-theme-toggle {
     box-shadow: 0 0 4px 1px #d0b25a7a;
 }
 
+.bg-light-gold {
+    background-color: rgba(191, 165, 68, 0.15) !important;
+    border-left: 4px solid #bfa544;
+}
+
 /*body.theme-dark .pericias-block {
     border-color: rgba(255, 255, 255, 0.08);
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.45);

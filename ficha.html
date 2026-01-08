@@ -392,59 +392,96 @@
                             <div style="width:13%">Outros</div>
                         </div>
 
-                        <div v-for="(p, idx) in pericias" :key="p.nome"
-                            class="d-flex align-items-center pericia-row mb-2 gap-1">
-                            <div style="width:36%">{{ p.nome }} <small class="text-muted">({{ p.atrib }})</small></div>
+                        <div v-for="(p, idx) in periciasComDom" :key="p.nome + idx"
+                            class="d-flex align-items-center pericia-row mb-2 gap-1"
+                            :class="{ 'bg-light-gold': p.isDom }">
+                            <div style=" width:36%" :class="{ 'ms-2': p.isDom }">
+                                {{ p.nome }}
+                                <small class="text-muted">({{ p.atrib }})</small>
+                                <!-- Ícone especial para Dom (opcional, mas fica bonito) -->
+                                <i v-if="p.nome === 'Dom'" class="bi bi-stars text-gold ms-1" title="Bônus do Dom"></i>
+                            </div>
                             <div style="width:14%" class="text-center">
-                                <input :disabled="true" type="number" class="form-control form-control-sm text-center"
+                                <input disabled type="number" class="form-control form-control-sm text-center"
                                     :value="totalPericia(p)" readonly />
                             </div>
-                            <!-- 1/2 Nível agora calculado automaticamente -->
                             <div style="width:12%">
-                                <input disabled type="number" :value="halfLevelValue"
+                                <input disabled type="number" :value="p.halfLevel || halfLevelValue"
                                     class="form-control form-control-sm text-center" />
                             </div>
-                            <!-- BONUS DO ATRIBUTO (auto) -->
-                            <div style="width:12%">
-                                <input disabled type="number" :value="attrBonusFromSigla(p.atrib)"
+                            <div style="width:13%">
+                                <input disabled type="number" :value="p.atributo || attrBonusFromSigla(p.atrib)"
                                     class="form-control form-control-sm text-center" />
                             </div>
-                            <div style="width:13%"><input :disabled="!editMode" type="number" v-model.number="p.treino"
-                                    class="form-control form-control-sm" /></div>
-                            <div style="width:13%"><input :disabled="!editMode" type="number" v-model.number="p.outros"
-                                    class="form-control form-control-sm" /></div>
+                            <div style="width:13%">
+                                <!-- Treino +1 fixo para Dom, não editável -->
+                                <input v-if="p.nome === 'Dom'" disabled type="number" value="1"
+                                    class="form-control form-control-sm text-center" />
+                                <input v-else :disabled="!editMode" type="number" v-model.number="p.treino"
+                                    class="form-control form-control-sm" />
+                            </div>
+                            <div style="width:13%">
+                                <input :disabled="!editMode || p.nome === 'Dom'" type="number" v-model.number="p.outros"
+                                    class="form-control form-control-sm" />
+                            </div>
                         </div>
                     </div>
 
                     <!-- EQUIPAMENTO -->
                     <h5 class="section-title">Equipamentos</h5>
                     <div class="pericias-block p-3 mb-3">
-                        <div class="input-group">
-                            <input :disabled="!editMode" v-model="novoItem" class="form-control"
-                                placeholder="Novo item" />
-                            <button :disabled="!editMode" class="btn btn-gold" @click="addItem">+</button>
+                        <!-- Adicionar novo item -->
+                        <div class="row g-2 align-items-end mb-3">
+                            <div class="col-7">
+                                <input :disabled="!editMode" v-model="novoItemNome" class="form-control"
+                                    placeholder="Nome do item" />
+                            </div>
+                            <div class="col-3">
+                                <input :disabled="!editMode" type="number" min="1" v-model.number="novaQuantidade"
+                                    class="form-control text-center" placeholder="Qtd" />
+                            </div>
+                            <div class="col-2">
+                                <button :disabled="!editMode" class="btn btn-gold w-100" @click="addItem">
+                                    <i class="bi bi-plus-lg"></i>
+                                </button>
+                            </div>
                         </div>
-                        <ul class="list-group mb-3" :class="{'mt-2': personagem.equipamentos.length}">
+
+                        <!-- Lista de itens -->
+                        <ul class="list-group" :class="{'mt-2': personagem.equipamentos.length}">
                             <li v-for="(item, i) in personagem.equipamentos" :key="i"
-                                class="list-group-item d-flex justify-content-between align-items-center">
-                                <span>{{ item }}</span>
-                                <button :disabled="!editMode" class="btn btn-sm btn-danger"
-                                    @click="delItem(i)">Remover</button>
+                                class="list-group-item d-flex align-items-center justify-content-between">
+                                <div class="d-flex align-items-center flex-grow-1 me-2">
+                                    <strong class="me-2">{{ item.nome }}</strong>
+                                    <span class="badge bg-secondary" style="font-family: cursive;">{{ item.quantidade
+                                        }}</span>
+                                </div>
+                                <div class="btn-group btn-group-sm" role="group">
+                                    <button :disabled="!editMode" class="btn btn-outline-success"
+                                        @click="aumentarItem(i)" title="Adicionar +1">
+                                        <i class="bi bi-plus"></i>
+                                    </button>
+                                    <button :disabled="!editMode" class="btn btn-outline-warning"
+                                        @click="diminuirItem(i)" title="Remover 1">
+                                        <i class="bi bi-dash"></i>
+                                    </button>
+                                    <button :disabled="!editMode" class="btn btn-outline-danger" @click="removerItem(i)"
+                                        title="Remover tudo">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </div>
+                            </li>
+                            <li v-if="!personagem.equipamentos.length" class="list-group-item text-muted text-center">
+                                Nenhum equipamento
                             </li>
                         </ul>
 
-                        <div class="row g-2">
-                            <div class="col-6">
+                        <!-- M.O (Mantido) -->
+                        <div class="row g-2 mt-3">
+                            <div class="col-12">
                                 <div class="input-group">
                                     <span class="input-group-text attr-label">M.O</span>
                                     <input :disabled="!editMode" type="number" v-model.number="personagem.mo"
-                                        class="form-control" />
-                                </div>
-                            </div>
-                            <div class="col-6">
-                                <div class="input-group">
-                                    <span class="input-group-text attr-label">Peso (kg)</span>
-                                    <input :disabled="!editMode" type="number" v-model.number="personagem.peso"
                                         class="form-control" />
                                 </div>
                             </div>
@@ -591,6 +628,15 @@
 
     <script src="config.js"></script>
     <script src="script.js"></script>
+
+    <iframe id="chatBotIframe" src="https://relpz.com/sites/aurora/rufus?embed=true" frameborder="0" scrolling="no"
+        allowtransparency="true" allow="clipboard-write; clipboard-read"
+        style="position: fixed;visibility: hidden;transition: height 0.3s ease-in-out;z-index: 1030;">
+    </iframe>
+
+    <script src="https://relpz.com/assets/js/embed-chat.js"></script>
+    <script>initializeChat()</script>
+
 </body>
 
 </html>

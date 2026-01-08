@@ -192,11 +192,14 @@ new Vue({
       marcadores: [],
       poderes: [],
       mo: 0,
-      peso: 0,
       nivel: 1
     },
+
+    novoItemNome: '',
+    novaQuantidade: 1,
+
     novoAtaque: { nome: '', teste: '', dano: '', tipo: '', critico: '', alcance: '' },
-    novaHab: '', novoItem: '',
+    novaHab: '',
     dons: [
       'Manipular Luz',
       'Controle Gravitacional',
@@ -294,6 +297,40 @@ new Vue({
         (Number(d.armadura) || 0) +
         (Number(d.escudo) || 0) +
         (Number(d.outros) || 0)
+    },
+    periciaDom() {
+      if (!this.personagem.dom || !this.currentDomData) {
+        return null; // Não mostra se não tiver Dom selecionado
+      }
+
+      let atribSigla = this.currentDomData.atributo; // ex: 'CAR', 'DES', etc.
+      atribSigla = atribSigla.substring(0, 3).toUpperCase(); // Segurança caso falte atributo
+
+      console.log('atribSigla:', atribSigla);
+
+      return {
+        nome: 'Dom',
+        atrib: atribSigla,
+        // Valores calculados (não precisam ser armazenados)
+        isDom: true,
+        halfLevel: this.halfLevelValue,
+        atributo: this.attrBonusFromSigla(atribSigla),
+        treino: 1,        // Sempre +1 fixo
+        outros: 0         // Pode deixar editável se quiser, ou fixo em 0
+      };
+    },
+
+    periciasComDom() {
+      // Insere a perícia Dom logo após Diplomacia
+      const lista = [...this.pericias];
+      const indexDiplomacia = lista.findIndex(p => p.nome === 'Diplomacia');
+      if (indexDiplomacia !== -1 && this.periciaDom) {
+        lista.splice(indexDiplomacia + 1, 0, this.periciaDom);
+      } else if (this.periciaDom) {
+        // Se por algum motivo não achar Diplomacia, adiciona no final
+        lista.push(this.periciaDom);
+      }
+      return lista;
     },
     halfLevelValue() {
       return Math.floor((this.personagem.nivel || 0) / 2)
@@ -768,13 +805,52 @@ new Vue({
     removerHab(i) {
       this.personagem.habilidades.splice(i, 1);
     },
+
     addItem() {
-      if (!this.novoItem) return;
-      this.personagem.equipamentos.push(this.novoItem);
-      this.novoItem = '';
+      const nome = this.novoItemNome.trim();
+      if (!nome) return;
+
+      const quantidade = Number(this.novaQuantidade) || 1;
+      if (quantidade <= 0) return;
+
+      // Procura se o item já existe (case insensitive, ignora acentos opcionais)
+      const existente = this.personagem.equipamentos.find(
+        item => item.nome.toLowerCase() === nome.toLowerCase()
+      );
+
+      if (existente) {
+        existente.quantidade += quantidade;
+        Toast.fire({ icon: 'info', title: `Adicionado +${quantidade} ${nome}` });
+      } else {
+        this.personagem.equipamentos.push({
+          nome: nome,
+          quantidade: quantidade
+        });
+        Toast.fire({ icon: 'success', title: `Adicionado ${nome} ×${quantidade}` });
+      }
+
+      // Limpa os campos
+      this.novoItemNome = '';
+      this.novaQuantidade = 1;
     },
-    delItem(i) {
-      this.personagem.equipamentos.splice(i, 1);
+
+    aumentarItem(index) {
+      this.personagem.equipamentos[index].quantidade++;
+    },
+
+    diminuirItem(index) {
+      const item = this.personagem.equipamentos[index];
+      if (item.quantidade > 1) {
+        item.quantidade--;
+      } else {
+        this.removerItem(index);
+      }
+    },
+
+    removerItem(index) {
+      const item = this.personagem.equipamentos[index];
+      this.personagem.equipamentos.splice(index, 1);
+      Toast.fire({ icon: 'info', title: `${item.nome} removido` });
     },
 
     attrBonus(score) {
@@ -844,7 +920,26 @@ new Vue({
     writeFrom(obj) {
       if (obj.personagem) {
         this.personagem = Object.assign(this.personagem, obj.personagem);
-        // Garante que o array de poderes exista
+
+        // === CONVERSÃO DE EQUIPAMENTOS ANTIGOS ===
+        if (Array.isArray(this.personagem.equipamentos)) {
+          const foiStrings = typeof this.personagem.equipamentos[0] === 'string';
+          if (foiStrings && this.personagem.equipamentos.length > 0) {
+            this.personagem.equipamentos = this.personagem.equipamentos.map(nome => ({
+              nome: nome.trim(),
+              quantidade: 1
+            }));
+            const agrupado = [];
+            this.personagem.equipamentos.forEach(item => {
+              const existente = agrupado.find(i => i.nome.toLowerCase() === item.nome.toLowerCase());
+              if (existente) existente.quantidade++;
+              else agrupado.push({ ...item });
+            });
+            this.personagem.equipamentos = agrupado;
+          }
+        }
+
+        if (!this.personagem.equipamentos) this.$set(this.personagem, 'equipamentos', []);
         if (!this.personagem.poderes) this.$set(this.personagem, 'poderes', []);
       }
       if (obj.pericias) this.pericias = obj.pericias;
