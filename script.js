@@ -156,8 +156,6 @@ const Toast = Swal.mixin({
   showConfirmButton: false,
   timer: 2200,
   timerProgressBar: true,
-  background: 'rgba(255, 248, 230, 0.95)',
-  color: '#3a2a00',
   iconColor: '#bfa544',
   customClass: {
     popup: 'aurora-toast-popup',
@@ -177,6 +175,8 @@ new Vue({
     theme: 'light',
     originalSnapshot: '',
     placeholder: 'assets/default-avatar.png',
+    mapInstance: null,
+    mapAddMode: false,
     personagem: {
       nome: '',
       dom: '',
@@ -189,13 +189,17 @@ new Vue({
       ataques: [],
       habilidades: [],
       equipamentos: [],
+      marcadores: [],
       poderes: [],
       mo: 0,
-      peso: 0,
       nivel: 1
     },
+
+    novoItemNome: '',
+    novaQuantidade: 1,
+
     novoAtaque: { nome: '', teste: '', dano: '', tipo: '', critico: '', alcance: '' },
-    novaHab: '', novoItem: '',
+    novaHab: '',
     dons: [
       'Manipular Luz',
       'Controle Gravitacional',
@@ -294,6 +298,40 @@ new Vue({
         (Number(d.escudo) || 0) +
         (Number(d.outros) || 0)
     },
+    periciaDom() {
+      if (!this.personagem.dom || !this.currentDomData) {
+        return null; // Não mostra se não tiver Dom selecionado
+      }
+
+      let atribSigla = this.currentDomData.atributo; // ex: 'CAR', 'DES', etc.
+      atribSigla = atribSigla.substring(0, 3).toUpperCase(); // Segurança caso falte atributo
+
+      console.log('atribSigla:', atribSigla);
+
+      return {
+        nome: 'Dom',
+        atrib: atribSigla,
+        // Valores calculados (não precisam ser armazenados)
+        isDom: true,
+        halfLevel: this.halfLevelValue,
+        atributo: this.attrBonusFromSigla(atribSigla),
+        treino: 1,        // Sempre +1 fixo
+        outros: 0         // Pode deixar editável se quiser, ou fixo em 0
+      };
+    },
+
+    periciasComDom() {
+      // Insere a perícia Dom logo após Diplomacia
+      const lista = [...this.pericias];
+      const indexDiplomacia = lista.findIndex(p => p.nome === 'Diplomacia');
+      if (indexDiplomacia !== -1 && this.periciaDom) {
+        lista.splice(indexDiplomacia + 1, 0, this.periciaDom);
+      } else if (this.periciaDom) {
+        // Se por algum motivo não achar Diplomacia, adiciona no final
+        lista.push(this.periciaDom);
+      }
+      return lista;
+    },
     halfLevelValue() {
       return Math.floor((this.personagem.nivel || 0) / 2)
     }
@@ -309,6 +347,7 @@ new Vue({
     notas() { this.$nextTick(() => this.autoGrowNotes()) },
     activeTab(newTab) {
       if (newTab === 'notas') this.$nextTick(() => this.autoGrowNotes())
+      if (newTab === 'mapa') this.$nextTick(() => this.initMap())
     }
   },
 
@@ -557,6 +596,149 @@ new Vue({
     setTab(tab) {
       this.activeTab = tab
       if (tab === 'notas') this.$nextTick(() => this.autoGrowNotes())
+      if (tab === 'mapa') {
+        this.$nextTick(() => {
+          // Pequeno delay para garantir que a div #map-container esteja visível e com tamanho definido
+          setTimeout(() => this.initMap(), 100);
+        });
+      }
+    },
+    toggleMapAddMode() {
+      this.mapAddMode = !this.mapAddMode;
+    },
+    initMap() {
+      if (!document.getElementById('map-container')) return;
+
+      if (this.mapInstance) {
+        this.mapInstance.remove();
+        this.mapInstance = null;
+      }
+
+      // CONFIGURAÇÃO (Mantenha seus valores de w, h e url)
+      const w = 1920;
+      const h = 1080;
+      const url = '/assets/Solara.png';
+
+      const map = L.map('map-container', {
+        crs: L.CRS.Simple,
+        minZoom: -5, // Começa baixo para permitir o cálculo inicial
+        maxZoom: 2,
+        zoomSnap: 0.1, // Permite frações de zoom para encaixe perfeito
+        attributionControl: false,
+        maxBoundsViscosity: 1.0 // Impede que o mapa seja arrastado para fora (efeito elástico rígido)
+      });
+
+      // Define os limites da imagem no mapa
+      const southWest = map.unproject([0, h], map.getMaxZoom() - 1);
+      const northEast = map.unproject([w, 0], map.getMaxZoom() - 1);
+      const bounds = new L.LatLngBounds(southWest, northEast);
+
+      L.imageOverlay(url, bounds).addTo(map);
+
+      // 1. Encaixa a imagem na tela
+      map.fitBounds(bounds);
+
+      // 2. Define o zoom mínimo como o zoom atual (fit). 
+      // Isso impede o usuário de diminuir o zoom além do tamanho da imagem.
+      map.setMinZoom(map.getBoundsZoom(bounds));
+
+      // 3. Restringe a navegação (pan) estritamente aos limites da imagem
+      map.setMaxBounds(bounds);
+
+      // 1. Carregar Marcadores Salvos no Personagem
+      if (this.personagem.marcadores && this.personagem.marcadores.length > 0) {
+        this.personagem.marcadores.forEach((m, index) => {
+          this.addMarkerToMapInstance(map, m, index);
+        });
+      }
+
+      // 2. Evento de Clique para Adicionar Novo
+      map.on('click', async (e) => {
+        if (!this.mapAddMode) return;
+
+        // Pede informações ao usuário
+        const { value: formValues } = await Swal.fire({
+          title: 'Novo Local',
+          html:
+            '<input id="swal-input1" class="swal2-input" placeholder="Nome do Local">' +
+            '<textarea id="swal-input2" class="swal2-textarea" placeholder="Descrição/Notas"></textarea>',
+          focusConfirm: false,
+          showCancelButton: true,
+          confirmButtonColor: '#8b7355',
+          preConfirm: () => {
+            return [
+              document.getElementById('swal-input1').value,
+              document.getElementById('swal-input2').value
+            ]
+          }
+        });
+
+        if (formValues && formValues[0]) {
+          // CORREÇÃO: Usamos a coordenada LatLng direta do clique.
+          // Não convertemos mais para pixels, evitando erros de projeção.
+          const novoMarcador = {
+            coords: [e.latlng.lat, e.latlng.lng],
+            titulo: formValues[0],
+            desc: formValues[1]
+          };
+
+          // Salva no Vue Data
+          if (!this.personagem.marcadores) this.$set(this.personagem, 'marcadores', []);
+          this.personagem.marcadores.push(novoMarcador);
+
+          // Adiciona visualmente no mapa agora
+          this.addMarkerToMapInstance(map, novoMarcador, this.personagem.marcadores.length - 1);
+
+          // Salva no banco
+          this.saveAndExport();
+
+          // Sai do modo de adição
+          this.mapAddMode = false;
+
+          Toast.fire({ icon: 'success', title: 'Local marcado no mapa!' });
+        }
+      });
+
+      this.mapInstance = map;
+    },
+    addMarkerToMapInstance(map, data, index) {
+      // CORREÇÃO: Usamos as coordenadas salvas diretamente.
+      // O Leaflet sabe exatamente onde colocar.
+      const marker = L.marker(data.coords).addTo(map);
+
+      // Popup com botão de excluir
+      const popupContent = `
+            <div class="text-center">
+                <strong style="color: #8b7355; font-family: 'IM Fell English SC', serif; font-size: 1.2em;">${data.titulo}</strong>
+                <hr style="margin: 4px 0;">
+                <p style="margin: 0 0 8px 0; font-size: 0.9em;">${data.desc || ''}</p>
+                <button class="btn btn-sm btn-outline-danger" style="font-size: 0.7rem; padding: 2px 6px;" 
+                    onclick="document.getElementById('app').__vue__.deleteMarker(${index})">
+                    <i class="bi bi-trash"></i> Remover
+                </button>
+            </div>
+        `;
+
+      marker.bindPopup(popupContent);
+    },
+
+    deleteMarker(index) {
+      Swal.fire({
+        title: 'Remover marcador?',
+        text: "Isso não pode ser desfeito.",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Sim, remover!'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.personagem.marcadores.splice(index, 1);
+          this.saveAndExport();
+          this.initMap(); // Recarrega o mapa para atualizar os índices e remover o pino
+          Toast.fire({ icon: 'success', title: 'Marcador removido.' });
+        }
+      })
     },
     applyOriginBonuses() {
       if (this.appliedOriginSkills.length) {
@@ -623,13 +805,52 @@ new Vue({
     removerHab(i) {
       this.personagem.habilidades.splice(i, 1);
     },
+
     addItem() {
-      if (!this.novoItem) return;
-      this.personagem.equipamentos.push(this.novoItem);
-      this.novoItem = '';
+      const nome = this.novoItemNome.trim();
+      if (!nome) return;
+
+      const quantidade = Number(this.novaQuantidade) || 1;
+      if (quantidade <= 0) return;
+
+      // Procura se o item já existe (case insensitive, ignora acentos opcionais)
+      const existente = this.personagem.equipamentos.find(
+        item => item.nome.toLowerCase() === nome.toLowerCase()
+      );
+
+      if (existente) {
+        existente.quantidade += quantidade;
+        Toast.fire({ icon: 'info', title: `Adicionado +${quantidade} ${nome}` });
+      } else {
+        this.personagem.equipamentos.push({
+          nome: nome,
+          quantidade: quantidade
+        });
+        Toast.fire({ icon: 'success', title: `Adicionado ${nome} ×${quantidade}` });
+      }
+
+      // Limpa os campos
+      this.novoItemNome = '';
+      this.novaQuantidade = 1;
     },
-    delItem(i) {
-      this.personagem.equipamentos.splice(i, 1);
+
+    aumentarItem(index) {
+      this.personagem.equipamentos[index].quantidade++;
+    },
+
+    diminuirItem(index) {
+      const item = this.personagem.equipamentos[index];
+      if (item.quantidade > 1) {
+        item.quantidade--;
+      } else {
+        this.removerItem(index);
+      }
+    },
+
+    removerItem(index) {
+      const item = this.personagem.equipamentos[index];
+      this.personagem.equipamentos.splice(index, 1);
+      Toast.fire({ icon: 'info', title: `${item.nome} removido` });
     },
 
     attrBonus(score) {
@@ -699,7 +920,26 @@ new Vue({
     writeFrom(obj) {
       if (obj.personagem) {
         this.personagem = Object.assign(this.personagem, obj.personagem);
-        // Garante que o array de poderes exista
+
+        // === CONVERSÃO DE EQUIPAMENTOS ANTIGOS ===
+        if (Array.isArray(this.personagem.equipamentos)) {
+          const foiStrings = typeof this.personagem.equipamentos[0] === 'string';
+          if (foiStrings && this.personagem.equipamentos.length > 0) {
+            this.personagem.equipamentos = this.personagem.equipamentos.map(nome => ({
+              nome: nome.trim(),
+              quantidade: 1
+            }));
+            const agrupado = [];
+            this.personagem.equipamentos.forEach(item => {
+              const existente = agrupado.find(i => i.nome.toLowerCase() === item.nome.toLowerCase());
+              if (existente) existente.quantidade++;
+              else agrupado.push({ ...item });
+            });
+            this.personagem.equipamentos = agrupado;
+          }
+        }
+
+        if (!this.personagem.equipamentos) this.$set(this.personagem, 'equipamentos', []);
         if (!this.personagem.poderes) this.$set(this.personagem, 'poderes', []);
       }
       if (obj.pericias) this.pericias = obj.pericias;

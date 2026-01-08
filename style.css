@@ -535,6 +535,11 @@ body.theme-dark .aurora-theme-toggle {
     box-shadow: 0 0 4px 1px #d0b25a7a;
 }
 
+.bg-light-gold {
+    background-color: rgba(191, 165, 68, 0.15) !important;
+    border-left: 4px solid #bfa544;
+}
+
 /*body.theme-dark .pericias-block {
     border-color: rgba(255, 255, 255, 0.08);
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.45);
@@ -1059,4 +1064,126 @@ body.theme-dark .power-connector {
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: translateY(0); }
+}
+
+/* === ESTILOS DO MAPA MINIMALISTA === */
+
+/* Moldura do Mapa */
+.map-frame-border {
+    border: 2px solid var(--gold-1);
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    background: #000;
+}
+
+/* Cursor de Mira */
+.cursor-crosshair {
+    cursor: crosshair !important;
+}
+
+/* Botão Flutuante (FAB) */
+.map-floating-actions {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    z-index: 1000; /* Acima do Leaflet */
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.btn-map-fab {
+    background: rgba(255, 253, 245, 0.9); /* Papel quase opaco */
+    color: var(--ink);
+    border: 1px solid var(--gold-1);
+    padding: 8px 16px;
+    border-radius: 30px; /* Pill shape */
+    font-family: 'IM Fell English SC', serif;
+    font-weight: bold;
+    font-size: 14px;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    backdrop-filter: blur(4px);
+}
+
+.btn-map-fab:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(184, 134, 11, 0.4);
+    background: #fff;
+}
+
+/* Estado Ativo (Modo de Cancelar) */
+.btn-map-fab.active {
+    background: rgba(45, 32, 5, 0.9); /* Tinta escura */
+    color: #ff6b6b;
+    border-color: #ff6b6b;
+}
+
+.btn-map-fab.active:hover {
+    background: #000;
+    box-shadow: 0 0 15px rgba(255, 107, 107, 0.4);
+}
+
+/* Indicador Central (HUD) */
+.map-hud-indicator {
+    position: absolute;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
+    background: rgba(0, 0, 0, 0.85);
+    border: 1px solid var(--gold-1);
+    padding: 8px 24px;
+    border-radius: 8px;
+    color: var(--gold-1);
+    font-family: 'IM Fell English SC', serif;
+    text-align: center;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.6);
+    pointer-events: none; /* Deixa clicar através dele */
+    animation: slideDownFade 0.3s ease-out;
+    backdrop-filter: blur(4px);
+}
+
+/* Ponto pulsante */
+.pulsing-dot {
+    width: 8px;
+    height: 8px;
+    background-color: #ff4444;
+    border-radius: 50%;
+    display: inline-block;
+    box-shadow: 0 0 0 rgba(255, 68, 68, 0.4);
+    animation: pulse-red 1.5s infinite;
+}
+
+@keyframes pulse-red {
+    0% {
+        box-shadow: 0 0 0 0 rgba(255, 68, 68, 0.7);
+    }
+    70% {
+        box-shadow: 0 0 0 10px rgba(255, 68, 68, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(255, 68, 68, 0);
+    }
+}
+
+@keyframes slideDownFade {
+    from { opacity: 0; transform: translate(-50%, -20px); }
+    to { opacity: 1; transform: translate(-50%, 0); }
+}
+
+/* Dark Mode Adjustments */
+body.theme-dark .btn-map-fab {
+    background: rgba(22, 27, 30, 0.9);
+    color: var(--gold-1);
+    border-color: var(--gold-1);
+}
+
+body.theme-dark .btn-map-fab:hover {
+    background: #1f262b;
 }
