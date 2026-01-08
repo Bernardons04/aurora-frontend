@@ -45,7 +45,7 @@ const DONS_DATA = {
       'Defesa': {
         titulo: 'Repulsor',
         poderes: [
-          { nivel: 1, nome: 'Desvio Gravitacional', custo: '1 PD', acao: 'Reação', desc: 'Ao ser acertado, força inimigo a rolar novamente com -2.' },
+          { nivel: 1, nome: 'Desvio Gravitacional', custo: '1 PD', acao: 'Reação', desc: 'Ao ser acertado com crítico, força inimigo a rolar novamente com -2.' },
           { nivel: 2, nome: 'Voo Controlado', custo: '1 PD', acao: 'Padrão', desc: 'Voa com deslocamento normal por 10 min.' },
           { nivel: 3, nome: 'Órbita de Detritos', custo: '2 PD', acao: 'Padrão', desc: 'Escudo por 1 min. +2 Defesa e 1d6 dano em quem atacar corpo-a-corpo.' }
         ]
