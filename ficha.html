@@ -394,7 +394,7 @@
 
                         <div v-for="(p, idx) in periciasComDom" :key="p.nome + idx"
                             class="d-flex align-items-center pericia-row mb-2 gap-1"
-                            :class="{ 'bg-light-gold': p.isDom }">
+                            :class="{ 'bg-light-gold p-1 rounded': p.isDom }">
                             <div style=" width:36%" :class="{ 'ms-2': p.isDom }">
                                 {{ p.nome }}
                                 <small class="text-muted">({{ p.atrib }})</small>
